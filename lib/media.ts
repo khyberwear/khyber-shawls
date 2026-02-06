@@ -1,6 +1,6 @@
 "use server";
 
-import { uploadFileToSupabase } from "@/lib/supabase";
+import { uploadFileToR2 } from "@/lib/cloudflare-r2";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import type { Prisma } from "@prisma/client";
@@ -337,7 +337,7 @@ export async function uploadMediaAction(
   const db = ensurePrismaClient();
 
   try {
-    const publicUrl = await uploadFileToSupabase(parsed.data.file);
+    const publicUrl = await uploadFileToR2(parsed.data.file, 'uploads');
 
     const data: Prisma.MediaCreateInput = {
       url: publicUrl,

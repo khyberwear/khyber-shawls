@@ -4,7 +4,7 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { uploadFileToSupabase } from "@/lib/supabase";
+import { uploadFileToR2 } from "@/lib/cloudflare-r2";
 import { requireUser, requireAdmin, getCurrentUser } from "@/lib/auth";
 import { slugify } from "@/lib/slugify";
 import { sendEmail } from "@/lib/email";
@@ -65,7 +65,7 @@ export async function createProductAction(
       });
       featuredImageId = media.id;
     } else if (featuredImageFile && featuredImageFile.size > 0) {
-      const publicUrl = await uploadFileToSupabase(featuredImageFile);
+      const publicUrl = await uploadFileToR2(featuredImageFile, 'uploads');
       const media = await prisma.media.create({
         data: { url: publicUrl, alt: parsed.data.title },
       });
@@ -103,7 +103,7 @@ export async function createProductAction(
       const file = galleryFiles[i];
       if (!file || file.size === 0) continue;
 
-      const publicUrl = await uploadFileToSupabase(file);
+      const publicUrl = await uploadFileToR2(file, 'uploads');
 
       galleryImages.push({
         id: `img_${Date.now()}_${i}_${Math.random().toString(36).substring(7)}`,
@@ -247,7 +247,7 @@ export async function updateProductAction(
         imageUrl = media.url;
       }
     } else if (featuredImageFile && featuredImageFile.size > 0) {
-      const publicUrl = await uploadFileToSupabase(featuredImageFile);
+      const publicUrl = await uploadFileToR2(featuredImageFile, 'uploads');
 
       const media = await prisma.media.create({
         data: { url: publicUrl, alt: parsed.data.title },
@@ -279,7 +279,7 @@ export async function updateProductAction(
     for (let i = 0; i < galleryFiles.length; i++) {
       const file = galleryFiles[i];
       if (!file || file.size === 0) continue;
-      const publicUrl = await uploadFileToSupabase(file);
+      const publicUrl = await uploadFileToR2(file, 'uploads');
       newGalleryImages.push({
         id: `img_${Date.now()}_${i}_${Math.random().toString(36).substring(7)}`,
         url: publicUrl,
@@ -471,7 +471,7 @@ export async function createCategoryAction(
     let featuredImageId: string | null = null;
     const imageFile = formData.get("featuredImageFile") as File | null;
     if (imageFile && imageFile.size > 0) {
-      const publicUrl = await uploadFileToSupabase(imageFile);
+      const publicUrl = await uploadFileToR2(imageFile, 'categories');
       const media = await prisma.media.create({
         data: { url: publicUrl, alt: formData.get("featuredImageAlt") as string || "" },
       });
@@ -743,7 +743,7 @@ export async function uploadMediaAction(
     for (const file of validFiles) {
       try {
         console.log(`uploadMediaAction: uploading ${file.name}`);
-        const publicUrl = await uploadFileToSupabase(file);
+        const publicUrl = await uploadFileToR2(file, 'uploads');
 
         await prisma.media.create({
           data: { url: publicUrl, alt: alt || file.name },

@@ -4,7 +4,7 @@
 import prisma from '@/lib/prisma'
 import { revalidatePath, revalidateTag } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { uploadFileToSupabase } from '@/lib/supabase'
+import { uploadFileToR2 } from '@/lib/cloudflare-r2'
 
 // ---- Shared Type ----
 export type CategoryActionState = {
@@ -30,7 +30,7 @@ export async function createCategoryAction(
 
     let featuredImageUrl: string | null = null
     if (featuredImageFile && featuredImageFile.size > 0) {
-      featuredImageUrl = await uploadFileToSupabase(featuredImageFile, 'products', 'categories')
+      featuredImageUrl = await uploadFileToR2(featuredImageFile, 'categories')
     }
 
     const slug = name
@@ -93,7 +93,7 @@ export async function updateCategoryAction(
       // Upload section image if provided, otherwise keep existing
       let imageUrl = existingSections[i]?.image?.url || ''
       if (imageFile && imageFile.size > 0) {
-        imageUrl = await uploadFileToSupabase(imageFile, 'products', 'categories')
+        imageUrl = await uploadFileToR2(imageFile, 'categories')
       }
 
       // Only include section if it has at least a title and description
@@ -112,7 +112,7 @@ export async function updateCategoryAction(
 
     let featuredImageUrl: string | null | undefined = undefined
     if (featuredImageFile && featuredImageFile.size > 0) {
-      featuredImageUrl = await uploadFileToSupabase(featuredImageFile, 'products', 'categories')
+      featuredImageUrl = await uploadFileToR2(featuredImageFile, 'categories')
     }
 
     // Build sections JSON (already processed with file uploads above)
