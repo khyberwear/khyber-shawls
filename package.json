@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build && npx @cloudflare/next-on-pages",
+    "build": "next build",
+    "pages:build": "prisma generate && DATABASE_URL='file:./dev.db' next build && npx @cloudflare/next-on-pages",
     "postbuild": "next-sitemap && node scripts/auto-index.js",
     "start": "next start -p ${PORT:-3000}",
     "lint": "eslint",
@@ -14,7 +15,7 @@
     "db:push": "prisma db push",
     "seo:index": "node scripts/auto-index.js",
     "pages:dev": "wrangler pages dev .next --d1=DB:khyber-shawls-db --port=3000",
-    "pages:deploy": "npm run build && wrangler pages deploy .vercel/output/static --project-name=khyber-shawls"
+    "pages:deploy": "npm run pages:build && wrangler pages deploy .vercel/output/static --project-name=khyber-shawls"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.985.0",
