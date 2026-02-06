@@ -1,3 +1,5 @@
+"use server";
+
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
 // Cloudflare R2 configuration
