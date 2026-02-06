@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "pages:build": "prisma generate && DATABASE_URL='file:./dev.db' next build && npx @cloudflare/next-on-pages",
+    "pages:build": "prisma generate && next build && npx @cloudflare/next-on-pages --skip-build",
     "postbuild": "next-sitemap && node scripts/auto-index.js",
     "start": "next start -p ${PORT:-3000}",
     "lint": "eslint",
