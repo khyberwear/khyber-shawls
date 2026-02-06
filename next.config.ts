@@ -33,6 +33,21 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     '/': ['./public/**/*'],
   },
+  async rewrites() {
+    // Proxy /images/* to Cloudflare R2 bucket
+    // This allows images to be accessed at khybershawls.store/images/...
+    const r2PublicUrl = process.env.R2_PUBLIC_URL;
+    
+    if (r2PublicUrl) {
+      return [
+        {
+          source: '/images/:path*',
+          destination: `${r2PublicUrl}/:path*`,
+        },
+      ];
+    }
+    return [];
+  },
   async headers() {
     return [
       {
