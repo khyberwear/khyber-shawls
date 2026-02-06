@@ -6,7 +6,7 @@ pages_build_output_dir = ".vercel/output/static"
 [[d1_databases]]
 binding = "DB"
 database_name = "khyber-shawls-db"
-database_id = "your-database-id-here"  # Get this after creating D1 database
+database_id = "7f9e1fd6-ccca-4df5-a36a-fb104e020865"
 
 # R2 Storage Bucket
 [[r2_buckets]]
