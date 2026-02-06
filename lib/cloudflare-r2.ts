@@ -11,13 +11,13 @@ const r2Client = new S3Client({
 });
 
 const R2_BUCKET_NAME = process.env.R2_BUCKET_NAME;
-const R2_PUBLIC_URL = process.env.R2_PUBLIC_URL; // e.g., https://your-bucket.r2.cloudflarestorage.com or custom domain
+const R2_PUBLIC_URL = process.env.R2_PUBLIC_URL; // e.g., https://pub-xxxxx.r2.dev
 
 /**
  * Upload a file to Cloudflare R2 storage
  * @param file - The file to upload
  * @param pathPrefix - The path prefix in the bucket (e.g., 'uploads', 'categories')
- * @returns The public URL of the uploaded file
+ * @returns The public URL of the uploaded file via /images proxy path
  */
 export async function uploadFileToR2(
   file: File,
@@ -45,9 +45,11 @@ export async function uploadFileToR2(
 
     await r2Client.send(command);
 
-    // Return the public URL
-    const publicUrl = `${R2_PUBLIC_URL}/${filePath}`;
-    return publicUrl;
+    // Return URL via /images proxy rewrite
+    // This allows images to be accessed at khybershawls.store/images/...
+    // instead of exposing the raw R2 bucket URL
+    const proxyUrl = `/images/${filePath}`;
+    return proxyUrl;
   } catch (error) {
     console.error('R2 upload error:', error);
     throw new Error(
