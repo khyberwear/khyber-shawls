@@ -7,7 +7,7 @@ import { sendEmail } from "@/lib/email"
 import { getCurrentUser } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 
-export const runtime = "nodejs"
+
 
 
 const contactSchema = z.object({

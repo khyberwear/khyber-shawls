@@ -12,7 +12,7 @@ import { formatCurrency } from "@/lib/currency"
 import { fetchProductBySlug, fetchRelatedProducts } from "@/lib/products"
 import { ProductGalleryTabs } from "@/components/product/product-gallery-tabs"
 
-export const runtime = "nodejs"
+
 export const revalidate = 3600 // Revalidate every hour (ISR)
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://khybershawls.store"

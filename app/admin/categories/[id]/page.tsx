@@ -5,7 +5,7 @@ import prisma from "@/lib/prisma";
 import { CategoryEditForm } from "@/components/admin/category-edit-form";
 import { DeleteCategoryButton } from "@/components/admin/delete-category-button";
 
-export const runtime = "nodejs";
+
 
 type PageProps = { params: { id?: string } | Promise<{ id?: string }> };
 

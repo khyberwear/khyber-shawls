@@ -5,7 +5,7 @@ import { OrderDetailsDialog } from "@/components/admin/order-details-dialog"
 import { formatCurrency } from "@/lib/currency"
 import { prisma } from "@/lib/prisma"
 
-export const runtime = "nodejs"
+
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
   month: "short",

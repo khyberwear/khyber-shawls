@@ -7,7 +7,7 @@ import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { formatCurrency } from "@/lib/currency";
 
-export const runtime = "nodejs";
+
 
 type OrderItemRow = { id: string; quantity: number; product: { title: string | null } | null };
 type OrderRow = { id: string; createdAt: Date; status: string; total: any; items: OrderItemRow[] };

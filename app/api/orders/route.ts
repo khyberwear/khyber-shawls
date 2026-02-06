@@ -12,7 +12,7 @@ type ProductItem = {
   inventory: number;
 };
 
-export const runtime = "nodejs"
+
 
 const orderSchema = z.object({
   customerName: z.string().min(1),

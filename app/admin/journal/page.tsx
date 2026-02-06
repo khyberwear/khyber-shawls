@@ -5,7 +5,7 @@ import { BlogForm } from "@/components/admin/blog-form"
 import { prisma } from "@/lib/prisma"
 import { Key, ReactElement, JSXElementConstructor, ReactNode, ReactPortal } from "react"
 
-export const runtime = "nodejs"
+
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
   month: "short",

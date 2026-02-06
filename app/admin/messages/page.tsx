@@ -1,7 +1,7 @@
 export const runtime = 'edge';
 import { prisma } from "@/lib/prisma"
 
-export const runtime = "nodejs"
+
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
   month: "short",

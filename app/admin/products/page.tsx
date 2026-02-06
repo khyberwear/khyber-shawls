@@ -6,7 +6,7 @@ import { fetchMediaLibrary } from "@/lib/media";
 import { formatCurrency } from "@/lib/currency";
 import prisma from "@/lib/prisma"; // ✅ default import (singleton)
 
-export const runtime = "nodejs";
+
 
 type CategoryOption = { id: string; name: string };
 type MediaOption = { id: string; url: string; alt: string | null };

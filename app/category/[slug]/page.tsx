@@ -5,7 +5,7 @@ import { Metadata } from "next";
 import { fetchProductsByCategorySlug } from "@/lib/products";
 import { CategoryView } from "./view";
 
-export const runtime = "nodejs";
+
 
 type PageProps = { params: { slug?: string } | Promise<{ slug?: string }> };
 

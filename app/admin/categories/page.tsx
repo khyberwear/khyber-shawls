@@ -5,7 +5,7 @@ import prisma from "@/lib/prisma";
 import { CategoryForm } from "@/components/admin/category-form";
 import { DeleteCategoryButton } from "@/components/admin/delete-category-button";
 
-export const runtime = "nodejs";
+
 
 export default async function AdminCategoriesPage() {
   if (!process.env.DATABASE_URL) {
