@@ -4,7 +4,7 @@ pages_build_output_dir = ".vercel/output/static"
 
 # Cloudflare D1 Database
 [[d1_databases]]
-binding = "DB"
+binding = "khybershawls"
 database_name = "khyber-shawls-db"
 database_id = "7f9e1fd6-ccca-4df5-a36a-fb104e020865"
 
