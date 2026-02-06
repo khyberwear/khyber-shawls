@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Upload, X, Loader2 } from "lucide-react"
 import Image from "next/image"
-import { supabaseClient } from "@/lib/supabase-client"
+import { uploadFileToR2 } from "@/lib/cloudflare-r2"
 
 interface ImageUploadProps {
     value?: string | null
@@ -17,7 +17,7 @@ export function ImageUpload({
     value,
     onChange,
     disabled,
-    bucket = "products",
+    bucket = "uploads",
     label = "Click to upload",
     multiple = false
 }: ImageUploadProps & { multiple?: boolean }) {
@@ -31,33 +31,12 @@ export function ImageUpload({
 
         try {
             await Promise.all(files.map(async (file) => {
-                const fileExt = file.name.split(".").pop()
-                const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
-                const filePath = `uploads/${fileName}`
-
-                const { error: uploadError } = await supabaseClient.storage
-                    .from(bucket)
-                    .upload(filePath, file)
-
-                if (uploadError) {
-                    throw uploadError
-                }
-
-                const { data } = supabaseClient.storage.from(bucket).getPublicUrl(filePath)
-
-                // Convert Supabase URL to branded URL
-                // e.g. https://[ref].supabase.co/storage/v1/object/public/products/uploads/file.jpg
-                // -> /storage/products/uploads/file.jpg
-                const supabaseBaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-                const brandedUrl = supabaseBaseUrl
-                    ? data.publicUrl.replace(`${supabaseBaseUrl}/storage/v1/object/public/`, '/storage/')
-                    : data.publicUrl
-
-                onChange(brandedUrl)
+                const url = await uploadFileToR2(file, bucket)
+                onChange(url)
             }))
         } catch (error) {
             console.error("Upload failed:", error)
-            alert(`Upload failed: ${(error as any).message || "Make sure your bucket is public and allows uploads (RLS policy)."}`)
+            alert(`Upload failed: ${(error as any).message || "Unknown error"}`)
         } finally {
             setIsUploading(false)
             // Reset input so functionality works if same files are selected again
