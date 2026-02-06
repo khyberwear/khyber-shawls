@@ -1,3 +1,4 @@
+export const runtime = 'edge';
 // app/admin/media/page.tsx
 import { HeroMediaForm } from "@/components/admin/hero-media-form"
 import { MediaLibrary } from "@/components/admin/media-library"

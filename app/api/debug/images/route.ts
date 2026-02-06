@@ -1,3 +1,4 @@
+export const runtime = 'edge';
 // app/api/debug/images/route.ts
 import { NextResponse } from "next/server";
 import { readdir } from "fs/promises";

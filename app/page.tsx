@@ -1,3 +1,4 @@
+export const runtime = 'edge';
 // app/page.tsx
 import Image from "next/image"
 import { SafeImage } from "@/components/ui/safe-image"

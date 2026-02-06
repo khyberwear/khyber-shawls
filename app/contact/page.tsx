@@ -1,3 +1,4 @@
+export const runtime = 'edge';
 import Link from "next/link"
 import { MapPin, Phone, Mail, MessageCircle } from "lucide-react"
 

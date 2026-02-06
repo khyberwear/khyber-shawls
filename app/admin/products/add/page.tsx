@@ -1,3 +1,4 @@
+export const runtime = 'edge';
 import { ProductForm } from "@/components/admin/product-form";
 import prisma from "@/lib/prisma";
 

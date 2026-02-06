@@ -1,3 +1,4 @@
+export const runtime = 'edge';
 import Image from "next/image"
 import { OrderStatusForm } from "@/components/admin/order-status-form"
 import { OrderDetailsDialog } from "@/components/admin/order-details-dialog"
