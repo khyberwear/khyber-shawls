@@ -1,19 +1,25 @@
-// /lib/prisma.ts
 import { PrismaClient } from "@prisma/client";
+import { PrismaD1 } from "@prisma/adapter-d1";
 
-/**
- * Create a single PrismaClient across hot reloads (dev)
- * and across RSC/Route handlers. Also logs in dev.
- */
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
-export const prisma: PrismaClient =
-  globalForPrisma.prisma ??
-  new PrismaClient({
+function createPrismaClient() {
+  // If we are in Cloudflare Pages and have the D1 database binding
+  const d1 = (process.env as any).khybershawls;
+
+  if (d1) {
+    const adapter = new PrismaD1(d1);
+    return new PrismaClient({ adapter });
+  }
+
+  // Fallback for local development or if D1 is not available
+  return new PrismaClient({
     log: process.env.NODE_ENV === "development" ? ["query", "warn", "error"] : ["error"],
   });
+}
 
-// Reuse client in dev to avoid exhausting DB connections
+export const prisma: PrismaClient = globalForPrisma.prisma ?? createPrismaClient();
+
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
 /** Optional helper to assert env presence when you want */
