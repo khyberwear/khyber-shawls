@@ -54,9 +54,7 @@
     "zod": "^4.1.12",
     "@prisma/client": "^6.18.0",
     "@tailwindcss/postcss": "^4.1.16",
-    "tailwindcss": "^4"
-  },
-  "devDependencies": {
+    "tailwindcss": "^4",
     "@types/bcryptjs": "^2.4.6",
     "@types/dompurify": "^3.0.5",
     "@types/linkify-it": "^5.0.0",
@@ -67,12 +65,14 @@
     "@types/react-dom": "^19",
     "@types/sanitize-html": "^2.13.0",
     "@types/trusted-types": "^2.0.7",
+    "typescript": "^5.9.3"
+  },
+  "devDependencies": {
     "eslint": "^9",
     "eslint-config-next": "16.0.0",
     "next-sitemap": "^4.2.3",
     "prisma": "^6.18.0",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
+    "ts-node": "^10.9.2"
   },
   "prisma": {
     "schema": "prisma/schema.prisma",
