@@ -48,7 +48,7 @@ export function middleware(request: NextRequest) {
     style-src 'self' 'unsafe-inline';
     img-src 'self' blob: data: https:;
     font-src 'self' data:;
-    connect-src 'self' https://vercel.live https://vitals.vercel-insights.com https://web-sdk.smartlook.com https://*.smartlook.com https://*.smartlook.cloud wss://*.smartlook.com wss://*.smartlook.cloud https://mjywwfaflipsnirccemw.supabase.co;
+    connect-src 'self' https://vercel.live https://vitals.vercel-insights.com https://web-sdk.smartlook.com https://*.smartlook.com https://*.smartlook.cloud wss://*.smartlook.com wss://*.smartlook.cloud;
     frame-ancestors 'self';
   `.replace(/\s{2,}/g, ' ').trim();
 

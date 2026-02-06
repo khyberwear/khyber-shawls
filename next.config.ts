@@ -9,7 +9,7 @@ const ALLOWED_HOSTNAMES = [
   "uncomfortable-dress.info",
   "khybershawls.store",
   "pure-e-mail.com",
-  "*.supabase.co",
+  // Add your R2 bucket domain here when configured
 ]
 
 const nextConfig: NextConfig = {
@@ -32,14 +32,6 @@ const nextConfig: NextConfig = {
   // Ensure public directory is properly served in standalone mode
   outputFileTracingIncludes: {
     '/': ['./public/**/*'],
-  },
-  async rewrites() {
-    return [
-      {
-        source: '/storage/:path*',
-        destination: 'https://mjywwfaflipsnirccemw.supabase.co/storage/v1/object/public/:path*',
-      },
-    ]
   },
   async headers() {
     return [

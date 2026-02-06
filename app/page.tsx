@@ -119,7 +119,7 @@ export default async function HomePage() {
       {/* ======================= PROMO BANNER ======================= */}
       {(() => {
         const promoSlide = heroSlides.find(s => s.key === "promo");
-        const bannerSrc = promoSlide?.backgroundImageUrl || "https://mjywwfaflipsnirccemw.supabase.co/storage/v1/object/public/products/uploads/1766434454520-7g5ie9-Web-Banner-2.jpg";
+        const bannerSrc = promoSlide?.backgroundImageUrl || "/uploads/default-banner.jpg";
 
         return (
           <section className="w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] my-8 md:my-12">
