@@ -1,5 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaD1 } from "@prisma/adapter-d1";
+import { PrismaLibSQL } from "@prisma/adapter-libsql";
+import { createClient } from "@libsql/client";
 
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
@@ -12,10 +14,11 @@ function createPrismaClient() {
     return new PrismaClient({ adapter });
   }
 
-  // Fallback for local development or if D1 is not available
-  return new PrismaClient({
-    log: process.env.NODE_ENV === "development" ? ["query", "warn", "error"] : ["error"],
-  });
+  // Fallback for local development: use LibSQL adapter with file-based SQLite
+  // PrismaClient without a driver adapter cannot run on edge runtime
+  const client = createClient({ url: process.env.DATABASE_URL || "file:./dev.db" });
+  const adapter = new PrismaLibSQL(client);
+  return new PrismaClient({ adapter });
 }
 
 export const prisma: PrismaClient = globalForPrisma.prisma ?? createPrismaClient();
