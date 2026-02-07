@@ -8,8 +8,6 @@ import { SiteHeader } from "@/components/site-header"
 import { getCurrentUser } from "@/lib/auth"
 import { fetchAllCategories } from "@/lib/products"
 import { getSettings } from "@/lib/settings"
-
-export const runtime = 'edge';
 import { WhatsAppFloat } from "@/components/whatsapp-float"
 import Script from "next/script"
 
