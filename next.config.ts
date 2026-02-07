@@ -28,11 +28,7 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "10mb",
     },
   },
-  // output: "standalone", // Removed as it creates symlinks incompatible with Cloudflare Pages
-  // Ensure public directory is properly served in standalone mode
-  outputFileTracingIncludes: {
-    '/': ['./public/**/*'],
-  },
+  // output: \"standalone\", // Removed as it creates symlinks incompatible with Cloudflare Pages
   async rewrites() {
     // Proxy /images/* to Cloudflare R2 bucket
     // This allows images to be accessed at khybershawls.store/images/...

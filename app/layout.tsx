@@ -8,7 +8,8 @@ import { SiteHeader } from "@/components/site-header"
 import { getCurrentUser } from "@/lib/auth"
 import { fetchAllCategories } from "@/lib/products"
 import { getSettings } from "@/lib/settings"
-import { SpeedInsights } from "@vercel/speed-insights/next"
+
+export const runtime = 'edge';
 import { WhatsAppFloat } from "@/components/whatsapp-float"
 import Script from "next/script"
 

@@ -1,36 +1,12 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-// Rate limiting storage (in production, use Redis or similar)
-const requestCounts = new Map<string, { count: number; resetAt: number }>();
-
-function checkRateLimit(ip: string): boolean {
-  const now = Date.now();
-  const requests = requestCounts.get(ip);
-
-  if (requests && requests.resetAt > now) {
-    if (requests.count >= 100) { // 100 requests per minute
-      return false;
-    }
-    requests.count++;
-  } else {
-    requestCounts.set(ip, { count: 1, resetAt: now + 60 * 1000 });
-  }
-  return true;
-}
+// Note: In-memory rate limiting is not effective on Cloudflare Workers (stateless isolates).
+// Use Cloudflare's built-in Rate Limiting rules in the dashboard instead.
+// https://developers.cloudflare.com/waf/rate-limiting-rules/
 
 export function middleware(request: NextRequest) {
   const response = NextResponse.next();
-
-  // Get client IP from headers
-  const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
-
-  // Check rate limit for API routes
-  if (request.nextUrl.pathname.startsWith('/api/')) {
-    if (!checkRateLimit(ip)) {
-      return new NextResponse('Too Many Requests', { status: 429 });
-    }
-  }
 
   // Add security headers
   response.headers.set('X-DNS-Prefetch-Control', 'on');

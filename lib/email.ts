@@ -1,35 +1,18 @@
-import 'dotenv/config';
-import nodemailer from 'nodemailer';
+// lib/email.ts
+// Cloudflare Workers compatible email using HTTP-based API (Elastic Email REST API)
+// nodemailer cannot be used on Cloudflare Workers because it relies on Node.js TCP/TLS sockets
 
-let transporter: nodemailer.Transporter | null = null;
+const ELASTIC_EMAIL_API_URL = 'https://api.elasticemail.com/v2/email/send';
 
-const smtpUser = process.env.SMTP_USER || process.env.ELASTIC_EMAIL_USER;
-const smtpPass = process.env.SMTP_PASSWORD || process.env.ELASTIC_EMAIL_PASSWORD;
-const smtpHost = process.env.SMTP_HOST || 'smtp.elasticemail.com';
-const smtpPort = Number(process.env.SMTP_PORT) || 2525;
-
-if (smtpUser && smtpPass) {
-  transporter = nodemailer.createTransport({
-    host: smtpHost,
-    port: smtpPort,
-    secure: smtpPort === 465, // Usually false for 2525 and 587
-    auth: {
-      user: smtpUser,
-      pass: smtpPass,
-    },
-    // Cloudways/Elastic Email often needs this
-    tls: {
-      rejectUnauthorized: false
-    }
-  });
-} else {
-  console.warn(
-    'SMTP credentials are missing. Email delivery is disabled.'
-  );
+function getEmailConfig() {
+  const apiKey = process.env.ELASTIC_EMAIL_API_KEY || process.env.SMTP_PASSWORD || process.env.ELASTIC_EMAIL_PASSWORD;
+  const fromEmail = process.env.MAIL_FROM || process.env.SMTP_USER || process.env.ELASTIC_EMAIL_USER;
+  return { apiKey, fromEmail };
 }
 
-export function isEmailConfigured() {
-  return transporter !== null;
+export function isEmailConfigured(): boolean {
+  const { apiKey, fromEmail } = getEmailConfig();
+  return !!(apiKey && fromEmail);
 }
 
 export async function sendEmail({
@@ -41,24 +24,53 @@ export async function sendEmail({
   subject: string;
   html: string;
 }) {
-  if (!transporter) {
+  const { apiKey, fromEmail } = getEmailConfig();
+
+  if (!apiKey || !fromEmail) {
+    console.warn('Email credentials are missing. Email delivery is disabled.');
     throw new Error('Email service is not configured.');
   }
 
-  const mailOptions = {
-    from: process.env.MAIL_FROM || smtpUser,
-    to,
-    subject,
-    html,
-  };
-
   try {
-    console.log(`Sending email from: ${mailOptions.from} to: ${mailOptions.to} subject: ${mailOptions.subject}`);
-    const info = await transporter.sendMail(mailOptions);
-    console.log('Email sent: ' + info.response);
-    return info;
+    console.log(`Sending email from: ${fromEmail} to: ${to} subject: ${subject}`);
+
+    // Use Elastic Email HTTP REST API (compatible with Cloudflare Workers)
+    const params = new URLSearchParams({
+      apikey: apiKey,
+      from: fromEmail,
+      to: to,
+      subject: subject,
+      bodyHtml: html,
+      isTransactional: 'true',
+    });
+
+    const response = await fetch(ELASTIC_EMAIL_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params.toString(),
+    });
+
+    const result = await response.text();
+
+    if (!response.ok) {
+      throw new Error(`Elastic Email API error: ${response.status} ${result}`);
+    }
+
+    let parsed;
+    try {
+      parsed = JSON.parse(result);
+    } catch {
+      parsed = { success: response.ok, data: result };
+    }
+
+    if (parsed.success === false) {
+      throw new Error(`Email send failed: ${parsed.error || result}`);
+    }
+
+    console.log('Email sent successfully:', parsed);
+    return parsed;
   } catch (error) {
-    console.error('Error sending email: ', error);
+    console.error('Error sending email:', error);
     throw error;
   }
 }

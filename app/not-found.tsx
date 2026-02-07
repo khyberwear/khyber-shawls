@@ -2,6 +2,8 @@ import Image from "next/image"
 import Link from "next/link"
 import { Search, Home, ShoppingBag, Phone, ArrowRight } from "lucide-react"
 
+export const runtime = 'edge';
+
 export default function NotFound() {
   const popularCategories = [
     { name: "Men Shawls", href: "/category/men-shawls", icon: "👔" },

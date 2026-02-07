@@ -1,6 +1,8 @@
 // /lib/hero.ts
 import prisma from "@/lib/prisma"
-import { unstable_cache } from "next/cache"
+
+// Note: unstable_cache is not supported on Cloudflare Pages.
+// D1 queries are fast enough without an application-level cache.
 
 export const HERO_CONFIGS = [
   { key: "home", label: "Hero 1" },
@@ -22,8 +24,7 @@ export type HeroRecord = {
   backgroundImageAlt: string | null
 }
 
-export const fetchAllHeroContent = unstable_cache(
-  async (): Promise<HeroRecord[]> => {
+export async function fetchAllHeroContent(): Promise<HeroRecord[]> {
     try {
       const rows = await prisma.heroMedia.findMany({
         include: { backgroundImage: true },
@@ -67,9 +68,6 @@ export const fetchAllHeroContent = unstable_cache(
         ctaHref: null,
         backgroundImageUrl: null,
         backgroundImageAlt: null,
-      }))
+      }));
     }
-  },
-  ["hero-content"],
-  { tags: ["hero"] }
-);
+}

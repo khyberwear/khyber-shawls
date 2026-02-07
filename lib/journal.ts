@@ -1,7 +1,9 @@
 // lib/journal.ts
 import { prisma } from "@/lib/prisma";
-import { unstable_cache } from "next/cache";
 import type { BlogPost } from "@prisma/client";
+
+// Note: unstable_cache is not supported on Cloudflare Pages.
+// D1 queries are fast enough without an application-level cache.
 
 export type SerializedPost = {
   id: string;
@@ -28,12 +30,8 @@ function serializePost(post: BlogPost): SerializedPost {
 }
 
 
-export const fetchLatestPosts = unstable_cache(
-  async (limit: number = 3): Promise<SerializedPost[]> => {
+export async function fetchLatestPosts(limit: number = 3): Promise<SerializedPost[]> {
     try {
-      if (!process.env.DATABASE_URL) {
-        throw new Error('DATABASE_URL is not configured.');
-      }
       const posts = await prisma.blogPost.findMany({
         where: { published: true },
         orderBy: { createdAt: "desc" },
@@ -44,7 +42,4 @@ export const fetchLatestPosts = unstable_cache(
       console.warn("[database] Failed to fetch latest posts. Returning empty list.", error);
       return [];
     }
-  },
-  ["latest-posts"],
-  { tags: ["journal"] }
-);
+}

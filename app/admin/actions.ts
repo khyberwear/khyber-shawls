@@ -156,7 +156,7 @@ export async function createProductAction(
     });
 
     revalidatePath("/admin/products");
-    revalidateTag("products", "max");
+    revalidateTag("products");
     return { success: "Product created successfully" };
   } catch (error) {
     console.error("Error creating product:", error);
@@ -323,7 +323,7 @@ export async function updateProductAction(
     });
 
     revalidatePath("/admin/products");
-    revalidateTag("products", "max");
+    revalidateTag("products");
     return { success: "Product updated successfully" };
   } catch (error) {
     console.error("Error updating product:", error);
@@ -355,7 +355,7 @@ export async function deleteProductAction(
     });
 
     revalidatePath("/admin/products");
-    revalidateTag("products", "max");
+    revalidateTag("products");
     return { success: "Product deleted" };
   } catch (error) {
     console.error("Error deleting product:", error);
@@ -430,7 +430,7 @@ export async function removeFeaturedImageAction(
     });
 
     revalidatePath("/admin/products");
-    revalidateTag("products", "max");
+    revalidateTag("products");
     return { success: "Featured image removed" };
   } catch (error) {
     console.error("Error removing featured image:", error);
@@ -491,7 +491,7 @@ export async function createCategoryAction(
     });
 
     revalidatePath("/admin/categories");
-    revalidateTag("categories", "max");
+    revalidateTag("categories");
     return { ok: true, message: "Category created" };
   } catch (err: any) {
     console.error("Error creating category:", err);
@@ -641,7 +641,7 @@ export async function upsertHeroMediaAction(
 
     revalidatePath("/admin/media");
     revalidatePath("/");
-    revalidateTag("hero", "max");
+    revalidateTag("hero");
     return { ok: true, message: "Hero banner saved" };
   } catch (error: any) {
     console.error("Error upserting hero media:", error);

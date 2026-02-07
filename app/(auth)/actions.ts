@@ -15,21 +15,10 @@ const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET || 'fallback-secret-change-in-production'
 );
 
-// Rate limiting storage (in-memory, use Redis in production)
-const loginAttempts = new Map<string, { count: number; resetAt: number }>();
-
-function checkRateLimit(email: string): boolean {
-  const now = Date.now();
-  const attempts = loginAttempts.get(email);
-
-  if (attempts && attempts.resetAt > now) {
-    if (attempts.count >= 5) {
-      return false; // Rate limited
-    }
-    attempts.count++;
-  } else {
-    loginAttempts.set(email, { count: 1, resetAt: now + 15 * 60 * 1000 }); // 15 min window
-  }
+// Note: In-memory rate limiting does not work on Cloudflare Workers (stateless isolates).
+// Use Cloudflare WAF Rate Limiting rules in the dashboard for production rate limiting.
+// This is kept as a basic no-op check for API compatibility.
+function checkRateLimit(_email: string): boolean {
   return true;
 }
 

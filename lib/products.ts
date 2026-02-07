@@ -1,7 +1,9 @@
 // lib/products.ts
 import { prisma } from "@/lib/prisma";
 import { product_images } from "@prisma/client";
-import { unstable_cache } from "next/cache";
+
+// Note: unstable_cache is not supported on Cloudflare Pages.
+// D1 queries are fast enough without an application-level cache.
 
 export type SerializedProduct = {
   id: string;
@@ -149,8 +151,7 @@ function serializeCategory(category: CategoryWithRelations): SerializedCategory 
   };
 }
 
-export const fetchPublishedProducts = unstable_cache(
-  async () => {
+export async function fetchPublishedProducts() {
     const products = await prisma.product.findMany({
       where: { published: true, inStock: true },
       include: {
@@ -165,13 +166,9 @@ export const fetchPublishedProducts = unstable_cache(
       ...serializeProduct(p as unknown as ProductWithRelations),
       tags: (p as any).tags ? (p as any).tags.map((t: any) => t.name) : [],
     }));
-  },
-  ["published-products"],
-  { tags: ["products"] }
-);
+}
 
-export const fetchProductsByCategorySlug = unstable_cache(
-  async (slug: string) => {
+export async function fetchProductsByCategorySlug(slug: string) {
     if (!slug) {
       return null;
     }
@@ -199,13 +196,9 @@ export const fetchProductsByCategorySlug = unstable_cache(
       category: { ...serializedCategory, productCount: serializedProducts.length },
       products: serializedProducts,
     };
-  },
-  ["products-by-category"],
-  { tags: ["products", "categories"] }
-);
+}
 
-export const fetchCategoriesWithProducts = unstable_cache(
-  async () => {
+export async function fetchCategoriesWithProducts() {
     const categories = await prisma.category.findMany({
       include: {
         products: { where: { published: true } },
@@ -214,13 +207,9 @@ export const fetchCategoriesWithProducts = unstable_cache(
     });
 
     return (categories as unknown as CategoryWithRelations[]).map(serializeCategory);
-  },
-  ["categories-with-products"],
-  { tags: ["categories", "products"] }
-);
+}
 
-export const fetchAllCategories = unstable_cache(
-  async () => {
+export async function fetchAllCategories() {
     const categories = await prisma.category.findMany({
       select: {
         id: true,
@@ -231,10 +220,7 @@ export const fetchAllCategories = unstable_cache(
     });
 
     return categories;
-  },
-  ["all-categories"],
-  { tags: ["categories"] }
-);
+}
 
 export async function fetchProductSummariesByIds(ids: string[]) {
   if (ids.length === 0) return [];
@@ -250,8 +236,7 @@ export async function fetchProductSummariesByIds(ids: string[]) {
   return (products as unknown as ProductWithRelations[]).map(serializeProduct);
 }
 
-export const fetchProductBySlug = unstable_cache(
-  async (slug: string): Promise<SerializedProductDetail | null> => {
+export async function fetchProductBySlug(slug: string): Promise<SerializedProductDetail | null> {
     if (!slug) {
       return null;
     }
@@ -268,13 +253,9 @@ export const fetchProductBySlug = unstable_cache(
 
     // The `product_variants` table has an inventory count, but for now we return 0
     return { ...(serializeProduct(product as unknown as ProductWithRelations)), inventory: 0 };
-  },
-  ["product-details"],
-  { tags: ["products"] }
-);
+}
 
-export const fetchRelatedProducts = unstable_cache(
-  async (categorySlug: string, currentProductId: string) => {
+export async function fetchRelatedProducts(categorySlug: string, currentProductId: string) {
     if (!categorySlug) return [];
 
     const category = await prisma.category.findUnique({
@@ -298,7 +279,5 @@ export const fetchRelatedProducts = unstable_cache(
       price: Number(p.price),
       featuredImage: { url: p.image, alt: p.name },
     }));
-  },
-  ["related-products"],
-  { tags: ["products"] }
+}
 );

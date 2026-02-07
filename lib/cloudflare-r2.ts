@@ -2,21 +2,30 @@
 
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
-// Cloudflare R2 configuration
-const r2Client = new S3Client({
-  region: 'auto',
-  endpoint: process.env.R2_ENDPOINT,
-  credentials: {
-    accessKeyId: process.env.R2_ACCESS_KEY_ID || '',
-    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
-  },
-});
+// Lazy-initialized S3 client (env vars aren't available at module top-level on CF Workers)
+let _r2Client: S3Client | null = null;
 
-const R2_BUCKET_NAME = process.env.R2_BUCKET_NAME;
-const R2_PUBLIC_URL = process.env.R2_PUBLIC_URL; // e.g., https://pub-xxxxx.r2.dev
+function getR2Client(): S3Client {
+  if (!_r2Client) {
+    _r2Client = new S3Client({
+      region: 'auto',
+      endpoint: process.env.R2_ENDPOINT,
+      credentials: {
+        accessKeyId: process.env.R2_ACCESS_KEY_ID || '',
+        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
+      },
+    });
+  }
+  return _r2Client;
+}
+
+const getR2BucketName = () => process.env.R2_BUCKET_NAME;
+const getR2PublicUrl = () => process.env.R2_PUBLIC_URL;
 
 /**
  * Upload a file to Cloudflare R2 storage
+ * Uses the R2 binding directly when available (Cloudflare Pages),
+ * falls back to S3-compatible API for local development.
  * @param file - The file to upload
  * @param pathPrefix - The path prefix in the bucket (e.g., 'uploads', 'categories')
  * @returns The public URL of the uploaded file via /images proxy path
@@ -25,31 +34,43 @@ export async function uploadFileToR2(
   file: File,
   pathPrefix = 'uploads'
 ): Promise<string> {
-  if (!R2_BUCKET_NAME || !R2_PUBLIC_URL) {
-    throw new Error(
-      'Cloudflare R2 environment variables (R2_BUCKET_NAME, R2_PUBLIC_URL) are missing'
-    );
-  }
+  const safeName = file.name.replace(/\s+/g, '-');
+  const filename = `${Date.now()}-${Math.random().toString(36).substring(7)}-${safeName}`;
+  const filePath = `${pathPrefix}/${filename}`;
 
   try {
     const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-    const safeName = file.name.replace(/\s+/g, '-');
-    const filename = `${Date.now()}-${Math.random().toString(36).substring(7)}-${safeName}`;
-    const filePath = `${pathPrefix}/${filename}`;
+
+    // Try using the R2 binding directly (available on Cloudflare Pages runtime)
+    const r2Bucket = (process.env as any).UPLOADS;
+    if (r2Bucket && typeof r2Bucket.put === 'function') {
+      await r2Bucket.put(filePath, arrayBuffer, {
+        httpMetadata: { contentType: file.type },
+      });
+      const proxyUrl = `/images/${filePath}`;
+      return proxyUrl;
+    }
+
+    // Fallback to S3-compatible API (for local development)
+    const bucketName = getR2BucketName();
+    const publicUrl = getR2PublicUrl();
+    if (!bucketName || !publicUrl) {
+      throw new Error(
+        'Cloudflare R2 environment variables (R2_BUCKET_NAME, R2_PUBLIC_URL) are missing and R2 binding is not available'
+      );
+    }
+
+    const body = new Uint8Array(arrayBuffer);
 
     const command = new PutObjectCommand({
-      Bucket: R2_BUCKET_NAME,
+      Bucket: bucketName,
       Key: filePath,
-      Body: buffer,
+      Body: body,
       ContentType: file.type,
     });
 
-    await r2Client.send(command);
+    await getR2Client().send(command);
 
-    // Return URL via /images proxy rewrite
-    // This allows images to be accessed at khybershawls.store/images/...
-    // instead of exposing the raw R2 bucket URL
     const proxyUrl = `/images/${filePath}`;
     return proxyUrl;
   } catch (error) {
