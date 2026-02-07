@@ -280,4 +280,3 @@ export async function fetchRelatedProducts(categorySlug: string, currentProductI
       featuredImage: { url: p.image, alt: p.name },
     }));
 }
-);
