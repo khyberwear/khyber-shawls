@@ -41,22 +41,12 @@ export async function uploadFileToR2(
   try {
     const arrayBuffer = await file.arrayBuffer();
 
-    // Try using the R2 binding directly (available on Cloudflare Pages runtime)
-    const r2Bucket = (process.env as any).UPLOADS;
-    if (r2Bucket && typeof r2Bucket.put === 'function') {
-      await r2Bucket.put(filePath, arrayBuffer, {
-        httpMetadata: { contentType: file.type },
-      });
-      const proxyUrl = `/images/${filePath}`;
-      return proxyUrl;
-    }
-
-    // Fallback to S3-compatible API (for local development)
+    // Use S3-compatible API (works on Vercel and local development)
     const bucketName = getR2BucketName();
     const publicUrl = getR2PublicUrl();
     if (!bucketName || !publicUrl) {
       throw new Error(
-        'Cloudflare R2 environment variables (R2_BUCKET_NAME, R2_PUBLIC_URL) are missing and R2 binding is not available'
+        'Storage environment variables (R2_BUCKET_NAME, R2_PUBLIC_URL) are missing.'
       );
     }
 

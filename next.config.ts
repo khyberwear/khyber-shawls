@@ -28,7 +28,7 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "10mb",
     },
   },
-  // output: \"standalone\", // Removed as it creates symlinks incompatible with Cloudflare Pages
+  output: "standalone",
   async rewrites() {
     // Proxy /images/* to Cloudflare R2 bucket
     // This allows images to be accessed at khybershawls.store/images/...

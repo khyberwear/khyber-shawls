@@ -1,4 +1,4 @@
-export const runtime = 'edge';
+// export const runtime = 'edge';
 // app/shop/page.tsx
 import { fetchPublishedProducts, fetchCategoriesWithProducts } from "@/lib/products";
 import { ShopClient } from "@/components/shop/shop-client";
