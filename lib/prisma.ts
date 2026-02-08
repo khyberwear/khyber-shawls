@@ -1,21 +1,32 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaD1 } from "@prisma/adapter-d1";
+import { getRequestContext } from "@cloudflare/next-on-pages";
 
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
 // Interface for Cloudflare Env
+// Note: We use D1Database from @cloudflare/workers-types
 interface CloudflareEnv {
   DB: D1Database;
 }
 
 function createPrismaClient() {
-  // Check if we are running in a Cloudflare Worker environment with D1
-  // This is a bit tricky in Next.js, often we might need to rely on process.env or context
-  // But for now, let's keep it standard. If on Edge/Worker, we expect D1.
+  try {
+    // Only attempt to access request context if running on edge/worker runtime
+    // or if the environment suggests we are in a CF context
+    if (process.env.NODE_ENV === 'production' || process.env.NEXT_RUNTIME === 'edge') {
+      const ctx = getRequestContext();
+      if (ctx.env && ctx.env.DB) {
+        // Use adapter for D1
+        const adapter = new PrismaD1(ctx.env.DB);
+        return new PrismaClient({ adapter });
+      }
+    }
+  } catch (err) {
+    // Ignore context errors during build/dev if context is missing
+  }
 
-  // NOTE: Next.js + Prisma + D1 has specific setup requirements.
-  // We'll stick to standard Prisma Client for now, but prepare for D1 if passed.
-
+  // Fallback to standard client (works for local dev with sqlite if set up, or with no adapter)
   return new PrismaClient({
     log: process.env.NODE_ENV === "development" ? ["query", "warn", "error"] : ["error"],
   });
@@ -27,9 +38,9 @@ if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
 /** Optional helper to assert env presence when you want */
 export function ensurePrismaClient(): PrismaClient {
-  // In D1 context, DATABASE_URL might just be a placeholder
-  if (!process.env.DATABASE_URL) {
-    console.warn("DATABASE_URL is not set. This might be fine if using D1 binding directly, otherwise check .env");
+  // Relaxed check: warns but doesn't throw, allowing D1 usage where DATABASE_URL is dummy
+  if (!process.env.DATABASE_URL && process.env.NODE_ENV === 'development') {
+    console.warn("DATABASE_URL is not set. If using D1 locally via wrangler dev, ensure proper config.");
   }
   return prisma;
 }
