@@ -75,9 +75,18 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const user = await getCurrentUser()
-  const categories = await fetchAllCategories()
-  const settings = await getSettings()
+  let user: any = null;
+  let categories: any[] = [];
+  let settings: any = null;
+
+  try {
+    user = await getCurrentUser();
+    categories = await fetchAllCategories();
+    settings = await getSettings();
+  } catch (error) {
+    console.error("Critical Layout Data Fetch Error:", error);
+    // Fallback defaults are already set above
+  }
 
   return (
     <html lang="en">
