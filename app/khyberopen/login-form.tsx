@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import { useActionState } from 'react';
+import { useActionState, startTransition } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { loginAction, type LoginState } from '@/app/(auth)/actions';
 
@@ -22,8 +22,16 @@ export default function LoginForm() {
     initialState
   );
 
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    startTransition(() => {
+      formAction(formData);
+    });
+  }
+
   return (
-    <form action={formAction} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6">
       {/* also include a hidden field so the value shows up if you submit w/o JS */}
       <input type="hidden" name="callbackUrl" value={callbackUrl} />
 
