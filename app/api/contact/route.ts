@@ -1,4 +1,4 @@
-// export const runtime = 'edge';
+// // export const runtime = 'edge';
 import { revalidatePath } from "next/cache"
 import { NextResponse } from "next/server"
 import { z } from "zod"

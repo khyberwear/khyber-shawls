@@ -1,4 +1,4 @@
-// export const runtime = 'edge';
+// // export const runtime = 'edge';
 // Health check endpoint for Coolify
 import { NextResponse } from 'next/server';
 

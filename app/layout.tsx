@@ -10,6 +10,8 @@ import { fetchAllCategories } from "@/lib/products"
 import { getSettings } from "@/lib/settings"
 import { WhatsAppFloat } from "@/components/whatsapp-float"
 import Script from "next/script"
+import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -105,6 +107,8 @@ export default async function RootLayout({
           <SiteFooter settings={settings} />
         </CartProvider>
         <WhatsAppFloat />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
