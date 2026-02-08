@@ -81,6 +81,8 @@ export async function loginAction(
       },
     });
 
+    console.log('[DEBUG] Prisma user lookup:', user);
+
     if (!user) {
       return { error: 'Invalid email or password.' };
     }
@@ -92,6 +94,7 @@ export async function loginAction(
 
     // Verify password
     const isValidPassword = await verifyPassword(password, user.password);
+    console.log('[DEBUG] Password check:', { input: password, hash: user.password, isValidPassword });
     if (!isValidPassword) {
       return { error: 'Invalid email or password.' };
     }
