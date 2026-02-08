@@ -1,4 +1,4 @@
-// // export const runtime = 'edge';
+// // // export const runtime = 'edge';
 // app/page.tsx
 import Image from "next/image"
 import { SafeImage } from "@/components/ui/safe-image"
@@ -344,3 +344,4 @@ export default async function HomePage() {
     </div>
   )
 }
+

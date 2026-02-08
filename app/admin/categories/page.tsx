@@ -1,4 +1,4 @@
-// // export const runtime = 'edge';
+// // // export const runtime = 'edge';
 import Image from "next/image";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
@@ -91,3 +91,4 @@ export default async function AdminCategoriesPage() {
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-// // export const runtime = 'edge';
+// // // export const runtime = 'edge';
 import { prisma } from "@/lib/prisma"
 
 
@@ -75,3 +75,4 @@ export default async function AdminMessagesPage() {
     </div>
   )
 }
+

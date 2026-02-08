@@ -1,4 +1,4 @@
-// // export const runtime = 'edge';
+// // // export const runtime = 'edge';
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { formatDate } from "@/lib/utils";
@@ -81,3 +81,4 @@ export default async function AdminUsersPage() {
     </div>
   );
 }
+

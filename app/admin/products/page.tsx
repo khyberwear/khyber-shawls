@@ -1,4 +1,4 @@
-// // export const runtime = 'edge';
+// // // export const runtime = 'edge';
 // app/admin/products/page.tsx
 import { ProductForm } from "@/components/admin/product-form";
 import { ProductListItem } from "@/components/admin/product-list-item";
@@ -150,3 +150,4 @@ export default async function AdminProductsPage() {
     </div>
   );
 }
+

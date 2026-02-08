@@ -2,7 +2,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { Search, Home, ShoppingBag, Phone, ArrowRight } from "lucide-react"
 
-// // export const runtime = 'edge';
+// // // export const runtime = 'edge';
 
 export default function NotFound() {
   const popularCategories = [
@@ -131,3 +131,4 @@ export default function NotFound() {
     </div>
   )
 }
+

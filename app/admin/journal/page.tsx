@@ -1,4 +1,4 @@
-// // export const runtime = 'edge';
+// // // export const runtime = 'edge';
 import { NotebookPen } from "lucide-react"
 
 import { BlogForm } from "@/components/admin/blog-form"
@@ -89,3 +89,4 @@ export default async function AdminJournalPage() {
     </div>
   )
 }
+

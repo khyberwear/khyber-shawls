@@ -1,4 +1,4 @@
-// // export const runtime = 'edge';
+// // // export const runtime = 'edge';
 // app/dashboard/page.tsx
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -128,3 +128,4 @@ export default async function DashboardPage() {
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-// // export const runtime = 'edge';
+// // // export const runtime = 'edge';
 import Link from "next/link"
 import Image from "next/image"
 import { Calendar, User, ArrowRight } from "lucide-react"
@@ -179,3 +179,4 @@ export default async function JournalPage() {
     </main>
   )
 }
+

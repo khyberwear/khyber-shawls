@@ -1,4 +1,4 @@
-// // export const runtime = 'edge';
+// // // export const runtime = 'edge';
 import LoginForm from './login-form';
 import { Metadata } from 'next';
 
@@ -28,3 +28,4 @@ export default function LoginPage() {
     </div>
   );
 }
+

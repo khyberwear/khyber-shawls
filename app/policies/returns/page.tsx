@@ -1,4 +1,4 @@
-// // export const runtime = 'edge';
+// // // export const runtime = 'edge';
 import Link from "next/link"
 
 export const metadata = {
@@ -158,3 +158,4 @@ export default function ReturnPolicyPage() {
     </main>
   )
 }
+

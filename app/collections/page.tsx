@@ -1,4 +1,4 @@
-// // export const runtime = 'edge';
+// // // export const runtime = 'edge';
 
 import Image from "next/image"
 import { SafeImage } from "@/components/ui/safe-image"
@@ -110,3 +110,4 @@ export default async function CollectionsPage() {
     </div>
   )
 }
+
