@@ -88,7 +88,7 @@ export function SettingsForm({ settings }: SettingsFormProps) {
             </label>
             <label className="flex flex-col gap-2 text-sm font-medium">
               SMTP Password
-              <input type="password" name="smtpPass" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" className="rounded-md border bg-background px-3 py-2 text-base outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/40" />
+              <input type="password" name="smtpPass" placeholder="••••••••" className="rounded-md border bg-background px-3 py-2 text-base outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/40" />
             </label>
           </AccordionContent>
         </AccordionItem>
@@ -102,7 +102,7 @@ export function SettingsForm({ settings }: SettingsFormProps) {
             </label>
             <label className="flex flex-col gap-2 text-sm font-medium">
               Stripe Secret Key
-              <input type="password" name="stripeSecretKey" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" className="rounded-md border bg-background px-3 py-2 text-base outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/40" />
+              <input type="password" name="stripeSecretKey" placeholder="••••••••" className="rounded-md border bg-background px-3 py-2 text-base outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/40" />
             </label>
           </AccordionContent>
         </AccordionItem>

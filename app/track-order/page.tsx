@@ -277,17 +277,17 @@ export default function TrackOrderPage() {
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
             <h3 className="font-semibold text-gray-900 mb-3">Delivery Information</h3>
             <ul className="text-sm text-gray-600 space-y-2">
-              <li>â€¢ Major cities: 2-4 business days</li>
-              <li>â€¢ Other areas: 4-7 business days</li>
-              <li>â€¢ International: 10-15 business days</li>
+              <li>• Major cities: 2-4 business days</li>
+              <li>• Other areas: 4-7 business days</li>
+              <li>• International: 10-15 business days</li>
             </ul>
           </div>
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
             <h3 className="font-semibold text-gray-900 mb-3">Need Help?</h3>
             <ul className="text-sm text-gray-600 space-y-2">
-              <li>â€¢ Email: orders@khybershawls.com</li>
-              <li>â€¢ Phone: +92 300 1234567</li>
-              <li>â€¢ Hours: Mon-Sat, 9 AM - 6 PM</li>
+              <li>• Email: orders@khybershawls.com</li>
+              <li>• Phone: +92 300 1234567</li>
+              <li>• Hours: Mon-Sat, 9 AM - 6 PM</li>
             </ul>
           </div>
         </div>

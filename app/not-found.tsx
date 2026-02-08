@@ -6,9 +6,9 @@ import { Search, Home, ShoppingBag, Phone, ArrowRight } from "lucide-react"
 
 export default function NotFound() {
   const popularCategories = [
-    { name: "Men Shawls", href: "/category/men-shawls", icon: "ðŸ‘”" },
-    { name: "Women Shawls", href: "/category/women-shawls", icon: "ðŸ‘—" },
-    { name: "Kids Shawls", href: "/category/kids-shawls", icon: "ðŸ‘¶" },
+    { name: "Men Shawls", href: "/category/men-shawls", icon: "👔" },
+    { name: "Women Shawls", href: "/category/women-shawls", icon: "👗" },
+    { name: "Kids Shawls", href: "/category/kids-shawls", icon: "👶" },
   ]
 
   const helpfulLinks = [

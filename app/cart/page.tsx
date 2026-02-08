@@ -124,7 +124,7 @@ export default function CartPage() {
             </p>
           )}
           {isLoading && (
-            <p className="text-sm text-muted-foreground">Loading cart detailsâ€¦</p>
+            <p className="text-sm text-muted-foreground">Loading cart details…</p>
           )}
           {cartProducts.map((product) => (
             <div

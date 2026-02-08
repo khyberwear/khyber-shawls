@@ -68,7 +68,7 @@ export default async function AdminOrdersPage() {
         <div className="mt-6 space-y-4">
           {orders.length === 0 ? (
             <p className="rounded-3xl border border-dashed border-muted-foreground/30 p-6 text-sm text-muted-foreground">
-              No orders yet. Once clients begin checking out, updates will appear here in real timeâ€”no approvals required.
+              No orders yet. Once clients begin checking out, updates will appear here in real time—no approvals required.
             </p>
           ) : (
             orders.map((order) => (

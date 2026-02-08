@@ -58,7 +58,7 @@ export default async function AdminMediaPage() {
       id: String(item.id),
       url: item.url,
       alt: item.alt ?? null,
-      uploadedAtLabel: createdAt ? uploadedAtFormatter.format(createdAt) : "â€”",
+      uploadedAtLabel: createdAt ? uploadedAtFormatter.format(createdAt) : "—",
       createdAtISO: createdAt ? createdAt.toISOString() : "",
     }
   })
@@ -68,7 +68,7 @@ export default async function AdminMediaPage() {
       <section className="rounded-4xl border border-white/10 bg-background/90 p-4 md:p-8 shadow-lg backdrop-blur">
         <h1 className="text-3xl font-semibold text-foreground">Media Library</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Update hero banners and supporting copy. Use the three panels below to prepare up to three homepage hero rotations. All changes publish instantlyâ€”no backup approvals required.
+          Update hero banners and supporting copy. Use the three panels below to prepare up to three homepage hero rotations. All changes publish instantly—no backup approvals required.
         </p>
       </section>
 

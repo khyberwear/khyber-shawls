@@ -5,8 +5,8 @@ import { MapPin, Phone, Mail, MessageCircle } from "lucide-react"
 import { prisma } from "@/lib/prisma"
 
 const studioHours = [
-  { day: "Monday â€“ Thursday", slots: ["10:00am â€“ 6:00pm"] },
-  { day: "Friday â€“ Saturday", slots: ["11:00am â€“ 8:00pm"] },
+  { day: "Monday – Thursday", slots: ["10:00am – 6:00pm"] },
+  { day: "Friday – Saturday", slots: ["11:00am – 8:00pm"] },
   { day: "Sunday", slots: ["By appointment only"] },
 ]
 
@@ -117,7 +117,7 @@ export default async function ContactPage() {
         <div>
           <p className="text-xs uppercase tracking-[0.3em] text-amber-600">Find us in Charsadda</p>
           <p className="text-base text-gray-600">
-            Our studio is nestled inside Durrani Marketâ€”minutes from the historic Shabqadar Fort road.
+            Our studio is nestled inside Durrani Market—minutes from the historic Shabqadar Fort road.
           </p>
         </div>
         <div className="rounded-2xl border border-dashed border-amber-200 bg-amber-50/50 p-6 text-center">

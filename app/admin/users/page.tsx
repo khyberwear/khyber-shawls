@@ -49,7 +49,7 @@ export default async function AdminUsersPage() {
               {users.map((user) => (
                 <tr key={user.id} className="border-b">
                   <td className="px-4 py-3">{user.email}</td>
-                  <td className="px-4 py-3">{user.name || "â€”"}</td>
+                  <td className="px-4 py-3">{user.name || "—"}</td>
                   <td className="px-4 py-3">
                     <UserRoleForm
                       userId={user.id}

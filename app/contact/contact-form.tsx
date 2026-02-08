@@ -101,7 +101,7 @@ export function ContactForm() {
       )}
 
       <Button type="submit" className="w-full" disabled={isSubmitting}>
-        {isSubmitting ? "Sendingâ€¦" : "Send message"}
+        {isSubmitting ? "Sending…" : "Send message"}
       </Button>
     </form>
   )
