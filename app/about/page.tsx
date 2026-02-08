@@ -1,4 +1,4 @@
-// // // export const runtime = 'edge';
+﻿// // // // export const runtime = 'edge';
 import Image from "next/image"
 import Link from "next/link"
 
@@ -22,7 +22,7 @@ const craftPillars = [
   {
     title: "Slow fashion by design",
     description:
-      "We release seasonal edits only when workshops are ready—prioritising artisans’ wellbeing and zero-inventory waste.",
+      "We release seasonal edits only when workshops are readyâ€”prioritising artisansâ€™ wellbeing and zero-inventory waste.",
   },
 ]
 
@@ -58,14 +58,14 @@ const leadership = [
     name: "Hadiqa Khan",
     role: "Creative Director",
     quote:
-      "“A Khyber shawl is meant to be lived in—draped over denim at sunrise, or paired with velvet at weddings.”",
+      "â€œA Khyber shawl is meant to be lived inâ€”draped over denim at sunrise, or paired with velvet at weddings.â€",
     image: "/uploads/1762160790489-s3qd3-Icon-Khyber-Shawl-(1).png",
   },
   {
     name: "Hamza Khan",
     role: "Master Weaver",
     quote:
-      "“I still inspect every warp and weft before it leaves the loom. We owe that devotion to our ancestors.”",
+      "â€œI still inspect every warp and weft before it leaves the loom. We owe that devotion to our ancestors.â€",
     image: "/uploads/kh-open.avif",
   },
 ]
@@ -83,7 +83,7 @@ export default function AboutPage() {
           <p className="text-base text-gray-600">
             Our family-run studio brings together custodians of block-printing, vegetable dyeing, and hand
             weaving. We strive to keep ancestral skills alive while designing silhouettes that belong in
-            today’s wardrobes—minimalist, elevated, and unapologetically Pakistani.
+            todayâ€™s wardrobesâ€”minimalist, elevated, and unapologetically Pakistani.
           </p>
           <div className="grid gap-4 sm:grid-cols-3">
             {studioStats.map((stat) => (
@@ -209,4 +209,5 @@ export default function AboutPage() {
     </div>
   )
 }
+
 

@@ -1,4 +1,4 @@
-// // // export const runtime = 'edge';
+﻿// // // // export const runtime = 'edge';
 
 import Image from "next/image"
 import { SafeImage } from "@/components/ui/safe-image"
@@ -26,7 +26,7 @@ export default async function CollectionsPage() {
             Signature Collections
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-base text-amber-900/80 animate-fade-in-up delay-100">
-            Explore heritage embroideries, contemporary silhouettes, and limited-edition colourways—handpicked for every season.
+            Explore heritage embroideries, contemporary silhouettes, and limited-edition colourwaysâ€”handpicked for every season.
           </p>
         </div>
       </section>
@@ -110,4 +110,5 @@ export default async function CollectionsPage() {
     </div>
   )
 }
+
 

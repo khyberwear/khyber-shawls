@@ -1,4 +1,4 @@
-// // // export const runtime = 'edge';
+﻿// // // // export const runtime = 'edge';
 import Link from "next/link"
 
 export const metadata = {
@@ -164,7 +164,7 @@ export default function FAQPage() {
     <main className="mx-auto max-w-5xl px-6 py-16">
       <div className="mb-8">
         <Link href="/" className="text-sm text-amber-700 hover:text-amber-800 transition">
-          ← Back to Home
+          â† Back to Home
         </Link>
       </div>
 
@@ -261,4 +261,5 @@ export default function FAQPage() {
     </main>
   )
 }
+
 

@@ -1,4 +1,4 @@
-// // // export const runtime = 'edge';
+﻿// // // // export const runtime = 'edge';
 import { NextResponse } from "next/server"
 
 import { fetchProductSummariesByIds } from "@/lib/products"
@@ -16,4 +16,5 @@ export async function POST(request: Request) {
 
   return NextResponse.json({ products })
 }
+
 

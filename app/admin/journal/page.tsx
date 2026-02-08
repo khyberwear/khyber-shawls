@@ -1,4 +1,4 @@
-// // // export const runtime = 'edge';
+﻿// // // // export const runtime = 'edge';
 import { NotebookPen } from "lucide-react"
 
 import { BlogForm } from "@/components/admin/blog-form"
@@ -58,7 +58,7 @@ export default async function AdminJournalPage() {
         <div className="mt-6 space-y-4">
           {posts.length === 0 ? (
             <p className="rounded-3xl border border-dashed border-muted-foreground/30 p-6 text-sm text-muted-foreground">
-              No journal entries yet—craft your narrative to enrich the brand voice.
+              No journal entries yetâ€”craft your narrative to enrich the brand voice.
             </p>
           ) : (
             posts.map((post: { id: string; title: string; excerpt: string | null; createdAt: Date; published: boolean; author: { name: string | null; email: string; } | null; }) => (
@@ -89,4 +89,5 @@ export default async function AdminJournalPage() {
     </div>
   )
 }
+
 

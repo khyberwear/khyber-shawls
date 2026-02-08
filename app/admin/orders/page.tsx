@@ -1,4 +1,4 @@
-// // // export const runtime = 'edge';
+﻿// // // // export const runtime = 'edge';
 import Image from "next/image"
 import { OrderStatusForm } from "@/components/admin/order-status-form"
 import { OrderDetailsDialog } from "@/components/admin/order-details-dialog"
@@ -68,7 +68,7 @@ export default async function AdminOrdersPage() {
         <div className="mt-6 space-y-4">
           {orders.length === 0 ? (
             <p className="rounded-3xl border border-dashed border-muted-foreground/30 p-6 text-sm text-muted-foreground">
-              No orders yet. Once clients begin checking out, updates will appear here in real time—no approvals required.
+              No orders yet. Once clients begin checking out, updates will appear here in real timeâ€”no approvals required.
             </p>
           ) : (
             orders.map((order) => (
@@ -79,7 +79,7 @@ export default async function AdminOrdersPage() {
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
                     <p className="font-medium text-foreground">
-                      #{order.id.slice(0, 8)} · {order.customerName}
+                      #{order.id.slice(0, 8)} Â· {order.customerName}
                     </p>
                     <p className="text-xs text-muted-foreground">{order.customerEmail}</p>
                   </div>
@@ -103,7 +103,7 @@ export default async function AdminOrdersPage() {
                         />
                       )}
                       <span>
-                        {item.quantity} × {item.product?.name ?? "Removed product"}
+                        {item.quantity} Ã— {item.product?.name ?? "Removed product"}
                       </span>
                     </div>
                   ))}
@@ -132,4 +132,5 @@ export default async function AdminOrdersPage() {
     </div>
   )
 }
+
 

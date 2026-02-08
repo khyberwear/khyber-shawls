@@ -1,4 +1,4 @@
-// // // export const runtime = 'edge';
+﻿// // // // export const runtime = 'edge';
 import Link from "next/link"
 import Image from "next/image"
 import { Calendar, User, ArrowRight } from "lucide-react"
@@ -26,7 +26,7 @@ export default async function JournalPage() {
     <main className="mx-auto max-w-7xl px-6 py-16">
       <div className="mb-8">
         <Link href="/" className="text-sm text-amber-700 hover:text-amber-800 transition">
-          ← Back to Home
+          â† Back to Home
         </Link>
       </div>
 
@@ -179,4 +179,5 @@ export default async function JournalPage() {
     </main>
   )
 }
+
 

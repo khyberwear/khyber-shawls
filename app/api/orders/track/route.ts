@@ -1,4 +1,4 @@
-// // // export const runtime = 'edge';
+﻿// // // // export const runtime = 'edge';
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 
@@ -67,4 +67,5 @@ export async function POST(request: Request) {
     )
   }
 }
+
 

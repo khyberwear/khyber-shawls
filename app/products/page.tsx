@@ -1,4 +1,4 @@
-// // // export const runtime = 'edge';
+﻿// // // // export const runtime = 'edge';
 // app/products/page.tsx
 import { fetchPublishedProducts } from "@/lib/products";
 import { ProductCard } from "@/components/product-card";
@@ -29,4 +29,5 @@ export default async function ProductsIndex() {
     </main>
   );
 }
+
 

@@ -1,4 +1,4 @@
-// // // export const runtime = 'edge';
+﻿// // // // export const runtime = 'edge';
 // app/dashboard/page.tsx
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -47,7 +47,7 @@ export default async function DashboardPage() {
               Welcome back, {user.name ?? user.email}
             </h1>
             <p className="max-w-2xl text-sm text-muted-foreground">
-              Track orders, follow up on messages, and preview what’s shipping next.
+              Track orders, follow up on messages, and preview whatâ€™s shipping next.
             </p>
           </div>
           <div className="rounded-3xl border border-primary/20 bg-background/70 p-6 text-sm text-muted-foreground shadow-lg backdrop-blur">
@@ -83,7 +83,7 @@ export default async function DashboardPage() {
           <div className="mt-8 space-y-4">
             {orders.length === 0 ? (
               <p className="rounded-3xl border border-dashed border-muted-foreground/30 p-6 text-sm text-muted-foreground">
-                No orders yet. Shop the collection—your timeline will appear here.
+                No orders yet. Shop the collectionâ€”your timeline will appear here.
               </p>
             ) : (
               orders.map((order: OrderRow) => (
@@ -92,7 +92,7 @@ export default async function DashboardPage() {
                     <div>
                       <p className="font-medium text-foreground">Order #{order.id.slice(0, 8)}</p>
                       <p className="text-xs text-muted-foreground">
-                        {dateFormatter.format(order.createdAt)} · {order.status}
+                        {dateFormatter.format(order.createdAt)} Â· {order.status}
                       </p>
                     </div>
                     <p className="text-sm font-semibold text-foreground">{formatCurrency(order.total)}</p>
@@ -100,7 +100,7 @@ export default async function DashboardPage() {
                   <div className="mt-4 grid gap-1 text-xs text-muted-foreground sm:grid-cols-2">
                     {order.items.map((item: OrderItemRow) => (
                       <p key={item.id}>
-                        {item.quantity} × {item.product?.title ?? "Classic shawl"}
+                        {item.quantity} Ã— {item.product?.title ?? "Classic shawl"}
                       </p>
                     ))}
                   </div>
@@ -120,7 +120,7 @@ export default async function DashboardPage() {
 
           <div className="mt-6 space-y-4">
             <p className="rounded-3xl border border-dashed border-muted-foreground/30 p-6 text-sm text-muted-foreground">
-              Reach out via the contact form—your messages will show here for easy follow-up.
+              Reach out via the contact formâ€”your messages will show here for easy follow-up.
             </p>
           </div>
         </div>
@@ -128,4 +128,5 @@ export default async function DashboardPage() {
     </div>
   );
 }
+
 

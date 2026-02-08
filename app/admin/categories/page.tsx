@@ -1,4 +1,4 @@
-// // // export const runtime = 'edge';
+﻿// // // // export const runtime = 'edge';
 import Image from "next/image";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
@@ -44,7 +44,7 @@ export default async function AdminCategoriesPage() {
         <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {categories.length === 0 ? (
             <p className="rounded-3xl border border-dashed border-muted-foreground/30 p-6 text-sm text-muted-foreground">
-              Start by outlining your first category—everything you add appears instantly.
+              Start by outlining your first categoryâ€”everything you add appears instantly.
             </p>
           ) : (
             categories.map((c) => {
@@ -91,4 +91,5 @@ export default async function AdminCategoriesPage() {
     </div>
   );
 }
+
 

@@ -1,10 +1,10 @@
-// // // export const runtime = 'edge';
+﻿// // // // export const runtime = 'edge';
 // app/admin/products/page.tsx
 import { ProductForm } from "@/components/admin/product-form";
 import { ProductListItem } from "@/components/admin/product-list-item";
 import { fetchMediaLibrary } from "@/lib/media";
 import { formatCurrency } from "@/lib/currency";
-import prisma from "@/lib/prisma"; // ✅ default import (singleton)
+import prisma from "@/lib/prisma"; // âœ… default import (singleton)
 
 
 
@@ -16,7 +16,7 @@ type MediaOption = { id: string; url: string; alt: string | null };
 type AdminProductRow = {
   id: string;
   title: string;
-  description: string; // ✅ coerced to string
+  description: string; // âœ… coerced to string
   details: string | null;
   careInstructions: string | null;
   price: number;
@@ -71,7 +71,7 @@ export default async function AdminProductsPage() {
     name: c.name,
   }));
 
-  // ✅ Normalize media IDs to guaranteed strings to satisfy MediaOption
+  // âœ… Normalize media IDs to guaranteed strings to satisfy MediaOption
   const mediaOptions: MediaOption[] = (mediaLibrary ?? [])
     .map((m: any) => ({
       id: toStringOr(m?.id ?? m?.url), // fall back to URL if id missing
@@ -80,7 +80,7 @@ export default async function AdminProductsPage() {
     }))
     .filter((m) => m.id && m.url); // keep only valid entries
 
-  // ✅ Ensure description is a string (not null) to satisfy ProductListItem prop type
+  // âœ… Ensure description is a string (not null) to satisfy ProductListItem prop type
   const productsForDisplay: AdminProductRow[] = products.map((p: any) => ({
     id: p.id,
     title: toStringOr(p.name),
@@ -111,7 +111,7 @@ export default async function AdminProductsPage() {
           <div>
             <h1 className="text-3xl font-semibold text-foreground">Products</h1>
             <p className="text-sm text-muted-foreground">
-              Launch new shawls, wraps, and accessories—all changes publish instantly.
+              Launch new shawls, wraps, and accessoriesâ€”all changes publish instantly.
             </p>
           </div>
         </div>
@@ -133,7 +133,7 @@ export default async function AdminProductsPage() {
         <div className="mt-6 space-y-4">
           {productsForDisplay.length === 0 ? (
             <p className="rounded-3xl border border-dashed border-muted-foreground/30 p-6 text-sm text-muted-foreground">
-              No products yet—publish your first handcrafted shawl to showcase it here.
+              No products yetâ€”publish your first handcrafted shawl to showcase it here.
             </p>
           ) : (
             productsForDisplay.map((product) => (
@@ -150,4 +150,5 @@ export default async function AdminProductsPage() {
     </div>
   );
 }
+
 

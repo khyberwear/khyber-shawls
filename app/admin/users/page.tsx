@@ -1,4 +1,4 @@
-// // // export const runtime = 'edge';
+﻿// // // // export const runtime = 'edge';
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { formatDate } from "@/lib/utils";
@@ -49,7 +49,7 @@ export default async function AdminUsersPage() {
               {users.map((user) => (
                 <tr key={user.id} className="border-b">
                   <td className="px-4 py-3">{user.email}</td>
-                  <td className="px-4 py-3">{user.name || "—"}</td>
+                  <td className="px-4 py-3">{user.name || "â€”"}</td>
                   <td className="px-4 py-3">
                     <UserRoleForm
                       userId={user.id}
@@ -81,4 +81,5 @@ export default async function AdminUsersPage() {
     </div>
   );
 }
+
 
