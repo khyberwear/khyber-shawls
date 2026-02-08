@@ -103,7 +103,7 @@ export default async function HomePage() {
               <h2 className="mt-1 sm:mt-2 text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold text-gray-900">Men's Shawls</h2>
             </div>
             <Link href={`/category/${menCategory.slug}`} className="text-xs sm:text-sm font-medium text-amber-700 hover:text-amber-800 whitespace-nowrap">
-              Explore â†’
+              Explore &rarr;
             </Link>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 lg:gap-8">
@@ -146,7 +146,7 @@ export default async function HomePage() {
               <h2 className="mt-1 sm:mt-2 text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold text-gray-900">Women's Shawls</h2>
             </div>
             <Link href={`/category/${womenCategory.slug}`} className="text-xs sm:text-sm font-medium text-amber-700 hover:text-amber-800 whitespace-nowrap">
-              Explore â†’
+              Explore &rarr;
             </Link>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 md:gap-6 lg:gap-8">
@@ -169,7 +169,7 @@ export default async function HomePage() {
               <h2 className="mt-1 sm:mt-2 text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold text-gray-900">Charsadda Khaddar</h2>
             </div>
             <Link href={`/category/${khaddarCategory.slug}`} className="text-xs sm:text-sm font-medium text-amber-700 hover:text-amber-800 whitespace-nowrap">
-              Explore â†’
+              Explore &rarr;
             </Link>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 md:gap-6 lg:gap-8">
@@ -192,7 +192,7 @@ export default async function HomePage() {
               <h2 className="mt-1 sm:mt-2 text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold text-gray-900">Kids' Shawls</h2>
             </div>
             <Link href={`/category/${kidsCategory.slug}`} className="text-xs sm:text-sm font-medium text-amber-700 hover:text-amber-800 whitespace-nowrap">
-              Explore â†’
+              Explore &rarr;
             </Link>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 lg:gap-8">
@@ -224,7 +224,7 @@ export default async function HomePage() {
             {/* Feature 1 */}
             <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-lg hover:shadow-xl transition-shadow border border-amber-100">
               <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-amber-700 to-amber-600 flex items-center justify-center mb-4 sm:mb-5">
-                <span className="text-3xl sm:text-4xl">âœ¨</span>
+                <span className="text-3xl sm:text-4xl">✨</span>
               </div>
               <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">100% Pure Wool</h3>
               <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
@@ -235,7 +235,7 @@ export default async function HomePage() {
             {/* Feature 2 */}
             <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-lg hover:shadow-xl transition-shadow border border-amber-100">
               <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-amber-700 to-amber-600 flex items-center justify-center mb-4 sm:mb-5">
-                <span className="text-3xl sm:text-4xl">ðŸ§µ</span>
+                <span className="text-3xl sm:text-4xl">🧶</span>
               </div>
               <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">Master Craftsmanship</h3>
               <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
@@ -246,7 +246,7 @@ export default async function HomePage() {
             {/* Feature 3 */}
             <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-lg hover:shadow-xl transition-shadow border border-amber-100">
               <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-amber-700 to-amber-600 flex items-center justify-center mb-4 sm:mb-5">
-                <span className="text-3xl sm:text-4xl">ðŸšš</span>
+                <span className="text-3xl sm:text-4xl">🚚</span>
               </div>
               <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">Delivered Nationwide</h3>
               <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
@@ -261,7 +261,7 @@ export default async function HomePage() {
               className="group px-8 sm:px-10 py-3 sm:py-4 rounded-full bg-gradient-to-r from-amber-700 to-amber-600 text-white font-bold text-base sm:text-lg md:text-xl shadow-lg hover:shadow-xl hover:from-amber-800 hover:to-amber-700 transition-all transform hover:scale-105 inline-flex items-center gap-2"
             >
               Discover Our Collection
-              <span className="group-hover:translate-x-1 transition-transform">â†’</span>
+              <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
             </Link>
           </div>
         </div>
@@ -277,10 +277,10 @@ export default async function HomePage() {
           {/* Review 1 */}
           <div className="bg-gradient-to-br from-amber-50 to-white rounded-lg sm:rounded-xl border-l-4 border-amber-700 p-5 sm:p-6 shadow-md hover:shadow-lg transition-shadow">
             <div className="flex gap-1 mb-3 text-amber-600">
-              {Array(5).fill(0).map((_, i) => <span key={i} className="text-lg sm:text-xl">â˜…</span>)}
+              {Array(5).fill(0).map((_, i) => <span key={i} className="text-lg sm:text-xl">★</span>)}
             </div>
             <p className="text-sm sm:text-base text-gray-800 leading-relaxed mb-4 italic">
-              "The softest shawl I've ever owned â€” worth every rupee. The craftsmanship is exceptional!"
+              "The softest shawl I've ever owned &mdash; worth every rupee. The craftsmanship is exceptional!"
             </p>
             <div className="flex items-center gap-2 pt-3 border-t border-amber-200">
               <div className="w-10 h-10 rounded-full bg-amber-700 flex items-center justify-center text-white font-bold">
@@ -296,7 +296,7 @@ export default async function HomePage() {
           {/* Review 2 */}
           <div className="bg-gradient-to-br from-amber-50 to-white rounded-lg sm:rounded-xl border-l-4 border-amber-700 p-5 sm:p-6 shadow-md hover:shadow-lg transition-shadow">
             <div className="flex gap-1 mb-3 text-amber-600">
-              {Array(5).fill(0).map((_, i) => <span key={i} className="text-lg sm:text-xl">â˜…</span>)}
+              {Array(5).fill(0).map((_, i) => <span key={i} className="text-lg sm:text-xl">★</span>)}
             </div>
             <p className="text-sm sm:text-base text-gray-800 leading-relaxed mb-4 italic">
               "Incredible quality and fast delivery. My family loves them! Highly recommend to everyone."
@@ -315,7 +315,7 @@ export default async function HomePage() {
           {/* Review 3 */}
           <div className="bg-gradient-to-br from-amber-50 to-white rounded-lg sm:rounded-xl border-l-4 border-amber-700 p-5 sm:p-6 shadow-md hover:shadow-lg transition-shadow">
             <div className="flex gap-1 mb-3 text-amber-600">
-              {Array(5).fill(0).map((_, i) => <span key={i} className="text-lg sm:text-xl">â˜…</span>)}
+              {Array(5).fill(0).map((_, i) => <span key={i} className="text-lg sm:text-xl">★</span>)}
             </div>
             <p className="text-sm sm:text-base text-gray-800 leading-relaxed mb-4 italic">
               "Beautifully made, soft, and so warm. The attention to detail is remarkable. Love it!"
@@ -338,7 +338,7 @@ export default async function HomePage() {
         <div className="absolute inset-0 bg-black/40" />
         <div className="relative z-10 text-center px-4">
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-5 md:mb-6 drop-shadow-lg">Wrap Yourself in Heritage Today</h2>
-          <Link href="/products" className="inline-block px-6 sm:px-8 md:px-10 py-2.5 sm:py-3 md:py-4 rounded-full bg-amber-700 text-white font-bold text-base sm:text-lg md:text-xl lg:text-2xl hover:bg-amber-100 hover:text-amber-900 transition">Shop Now â†’</Link>
+          <Link href="/products" className="inline-block px-6 sm:px-8 md:px-10 py-2.5 sm:py-3 md:py-4 rounded-full bg-amber-700 text-white font-bold text-base sm:text-lg md:text-xl lg:text-2xl hover:bg-amber-100 hover:text-amber-900 transition">Shop Now &rarr;</Link>
         </div>
       </section>
     </div>
