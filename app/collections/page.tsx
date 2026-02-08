@@ -1,4 +1,5 @@
 ﻿// // // // export const runtime = 'edge';
+export const dynamic = "force-dynamic";
 
 import Image from "next/image"
 import { SafeImage } from "@/components/ui/safe-image"
