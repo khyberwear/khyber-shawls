@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { FormEvent, useState } from "react"
 import { Button } from "@/components/ui/button"
@@ -101,7 +101,7 @@ export function ContactForm() {
       )}
 
       <Button type="submit" className="w-full" disabled={isSubmitting}>
-        {isSubmitting ? "Sending…" : "Send message"}
+        {isSubmitting ? "Sendingâ€¦" : "Send message"}
       </Button>
     </form>
   )

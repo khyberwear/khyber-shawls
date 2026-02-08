@@ -1,4 +1,4 @@
-'use server'
+﻿'use server'
 
 // Server actions for category CRUD operations
 import prisma from '@/lib/prisma'

@@ -1,4 +1,4 @@
-// app/(auth)/actions.ts
+﻿// app/(auth)/actions.ts
 'use server';
 
 import { cookies } from 'next/headers';
@@ -73,7 +73,7 @@ export async function loginAction(
     maxAge: 60 * 60 * 24 * 7,
   });
 
-  // If they’re admin and going to /dashboard, nudge to admin overview.
+  // If theyâ€™re admin and going to /dashboard, nudge to admin overview.
   if (role === 'ADMIN' && (callbackUrl === '/' || callbackUrl === '/dashboard')) {
     redirect('/admin/products');
   }

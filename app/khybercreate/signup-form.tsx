@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import Link from "next/link"
 import { useEffect, useRef } from "react"
@@ -56,13 +56,13 @@ export function SignupForm({ redirectTo }: { redirectTo?: string }) {
           name="password"
           type="password"
           required
-          placeholder="••••••••"
+          placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
           className="rounded-md border bg-background px-3 py-2 text-sm outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/40"
         />
       </div>
       {state.error && <p className="text-sm text-destructive">{state.error}</p>}
       <Button type="submit" className="w-full" disabled={isPending}>
-        {isPending ? "Creating…" : "Create account"}
+        {isPending ? "Creatingâ€¦" : "Create account"}
       </Button>
       <p className="text-center text-sm text-muted-foreground">
         Already have an account?{' '}

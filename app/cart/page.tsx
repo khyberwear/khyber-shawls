@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 
 import Image from "next/image"
@@ -124,7 +124,7 @@ export default function CartPage() {
             </p>
           )}
           {isLoading && (
-            <p className="text-sm text-muted-foreground">Loading cart details…</p>
+            <p className="text-sm text-muted-foreground">Loading cart detailsâ€¦</p>
           )}
           {cartProducts.map((product) => (
             <div
