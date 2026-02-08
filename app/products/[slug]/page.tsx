@@ -1,4 +1,4 @@
-export const runtime = 'edge';
+// export const runtime = 'edge';
 // app/products/[slug]/page.tsx
 import type { Metadata } from "next"
 import Image from "next/image"

@@ -1,4 +1,4 @@
-export const runtime = 'edge';
+// export const runtime = 'edge';
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
@@ -14,7 +14,7 @@ export default async function EditCategoryPage({ params }: PageProps) {
     typeof (params as unknown as Promise<unknown>)?.then === "function"
       ? await (params as Promise<{ id?: string }>)
       : (params as { id?: string });
-  
+
   const id = resolvedParams?.id;
   if (!id) notFound();
 

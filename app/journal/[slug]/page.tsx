@@ -1,4 +1,4 @@
-export const runtime = 'edge';
+// export const runtime = 'edge';
 import Link from "next/link"
 import Image from "next/image"
 import { notFound } from "next/navigation"
@@ -106,7 +106,7 @@ export default async function BlogPostPage({ params }: Props) {
         {/* Content */}
         <div
           className="prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-amber-700 hover:prose-a:text-amber-800 prose-strong:text-gray-900"
-          dangerouslySetInnerHTML={{ 
+          dangerouslySetInnerHTML={{
             __html: sanitizeHtml(post.content, {
               allowedTags: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'img', 'blockquote', 'code', 'pre'],
               allowedAttributes: {

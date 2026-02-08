@@ -1,4 +1,4 @@
-export const runtime = 'edge';
+// export const runtime = 'edge';
 // app/category/[slug]/page.tsx
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     typeof (params as unknown as Promise<unknown>)?.then === "function"
       ? await (params as Promise<{ slug?: string }>)
       : (params as { slug?: string });
-  
+
   const slug = resolvedParams?.slug;
   if (!slug) return {};
 
@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!data) return {};
 
   const { category } = data;
-  
+
   return {
     title: category.seoTitle || `${category.name} | Khyber Shawls`,
     description: category.seoDescription || category.summary || `Shop our collection of ${category.name.toLowerCase()}`,
@@ -34,7 +34,7 @@ export default async function CategoryPage({ params }: PageProps) {
     typeof (params as unknown as Promise<unknown>)?.then === "function"
       ? await (params as Promise<{ slug?: string }>)
       : (params as { slug?: string });
-  
+
   const slug = resolvedParams?.slug;
   if (!slug) notFound();
 
