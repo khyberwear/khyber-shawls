@@ -35,7 +35,7 @@ export default function CheckoutPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ids }),
     })
-      .then((response) => response.json())
+      .then((response) => response.json() as Promise<any>)
       .then((data: { products: SerializedProduct[] }) => {
         if (!isMounted) return
         const nextMap: Record<string, SerializedProduct> = {}
@@ -68,12 +68,12 @@ export default function CheckoutPage() {
         }
       })
       .filter(Boolean) as Array<{
-      id: string
-      title: string
-      quantity: number
-      price: number
-      subtotal: number
-    }>
+        id: string
+        title: string
+        quantity: number
+        price: number
+        subtotal: number
+      }>
 
     const subtotal = detailed.reduce((totalValue, product) => totalValue + product.subtotal, 0)
     const deliveryFee = DELIVERY_FEES[deliveryType]
@@ -126,9 +126,9 @@ export default function CheckoutPage() {
       if (!response.ok) {
         let errorMsg = "Failed to place order"
         try {
-          const data = await response.json()
+          const data = (await response.json()) as any
           if (data?.error) errorMsg = data.error
-        } catch {}
+        } catch { }
         throw new Error(errorMsg)
       }
 
@@ -272,7 +272,7 @@ export default function CheckoutPage() {
                 <p className="text-sm text-muted-foreground">Delivery within 5-7 business days</p>
               </div>
             </label>
-            
+
             <label className="flex items-center gap-3 rounded-lg border p-4 cursor-pointer hover:bg-muted/50 transition-colors has-[:checked]:border-primary has-[:checked]:bg-primary/5">
               <input
                 type="radio"
@@ -310,7 +310,7 @@ export default function CheckoutPage() {
                 <p className="text-sm text-muted-foreground">Pay when your order arrives</p>
               </div>
             </label>
-            
+
             <label className="flex items-start gap-3 rounded-lg border p-4 cursor-pointer hover:bg-muted/50 transition-colors has-[:checked]:border-primary has-[:checked]:bg-primary/5">
               <input
                 type="radio"

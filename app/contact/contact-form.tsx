@@ -29,7 +29,7 @@ export function ContactForm() {
       })
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}))
+        const errorData = (await response.json().catch(() => ({}))) as any
         throw new Error(errorData.error || "Failed to submit")
       }
 

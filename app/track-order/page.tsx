@@ -44,7 +44,7 @@ export default function TrackOrderPage() {
         body: JSON.stringify({ orderNumber, email }),
       })
 
-      const data = await response.json()
+      const data = (await response.json()) as any
 
       if (!response.ok) {
         throw new Error(data.error || "Order not found")
