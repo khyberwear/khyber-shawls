@@ -1,8 +1,7 @@
 ﻿'use client'
 
 import Link from "next/link"
-import { useEffect, useRef } from "react"
-import { useFormState } from "react-dom"
+import { useEffect, useRef, useActionState } from "react"
 
 import { registerAction } from "@/app/(auth)/actions"
 import { Button } from "@/components/ui/button"
@@ -11,7 +10,7 @@ const initialState = { error: undefined as string | undefined }
 
 export function SignupForm({ redirectTo }: { redirectTo?: string }) {
   const formRef = useRef<HTMLFormElement>(null)
-  const [state, formAction, isPending] = useFormState(registerAction, initialState)
+  const [state, formAction, isPending] = useActionState(registerAction, initialState)
 
   useEffect(() => {
     if (!state.error) {
