@@ -7,7 +7,8 @@ const ELASTIC_EMAIL_API_URL = 'https://api.elasticemail.com/v2/email/send';
 function getEmailConfig() {
   const apiKey = process.env.ELASTIC_EMAIL_API_KEY || process.env.SMTP_PASSWORD || process.env.ELASTIC_EMAIL_PASSWORD;
   const fromEmail = process.env.MAIL_FROM || process.env.SMTP_USER || process.env.ELASTIC_EMAIL_USER;
-  return { apiKey, fromEmail };
+  const replyTo = process.env.MAIL_REPLY_TO;
+  return { apiKey, fromEmail, replyTo };
 }
 
 export function isEmailConfigured(): boolean {
@@ -24,7 +25,7 @@ export async function sendEmail({
   subject: string;
   html: string;
 }) {
-  const { apiKey, fromEmail } = getEmailConfig();
+  const { apiKey, fromEmail, replyTo } = getEmailConfig();
 
   if (!apiKey || !fromEmail) {
     console.warn('Email credentials are missing. Email delivery is disabled.');
@@ -38,11 +39,16 @@ export async function sendEmail({
     const params = new URLSearchParams({
       apikey: apiKey,
       from: fromEmail,
+      fromName: 'Khyber Shawls',
       to: to,
       subject: subject,
       bodyHtml: html,
       isTransactional: 'true',
     });
+
+    if (replyTo) {
+      params.append('replyTo', replyTo);
+    }
 
     const response = await fetch(ELASTIC_EMAIL_API_URL, {
       method: 'POST',
