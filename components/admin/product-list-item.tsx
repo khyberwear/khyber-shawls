@@ -3,21 +3,13 @@
 import { useActionState, useMemo, useState } from "react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { Pencil, Trash, X } from "lucide-react"
+import { Pencil, Trash, X, Link as LinkIcon, Package, Layers, Tag as TagIcon, CheckCircle2, AlertCircle, Eye, EyeOff } from "lucide-react"
 
 import { deleteProductAction, updateProductAction, deleteProductImageAction, removeFeaturedImageAction } from "@/app/admin/actions"
 import { Button } from "@/components/ui/button"
-
-
 import { RichTextEditor } from "@/components/admin/rich-text-editor"
-import { ImageUpload } from "@/components/admin/image-upload"
 
 type ActionState = { error?: string; success?: string }
-
-type MediaOption = {
-  id: string
-  label: string
-}
 
 type ProductData = {
   id: string
@@ -57,25 +49,40 @@ export function ProductListItem({ product, categories, mediaLibrary }: ProductLi
   const [details, setDetails] = useState(product.details || "")
   const [careInstructions, setCareInstructions] = useState(product.careInstructions || "")
 
-  // Image upload state
-  const [featuredImageUrl, setFeaturedImageUrl] = useState<string | null>(product.featuredImageUrl)
-  const [newGalleryImages, setNewGalleryImages] = useState<string[]>([])
+  // Image URL state
+  const [featuredImageUrl, setFeaturedImageUrl] = useState<string>(product.featuredImageUrl || "")
+  const [galleryUrls, setGalleryUrls] = useState<string[]>(product.galleryImages?.map(img => img.url) || [])
+  const [newGalleryUrl, setNewGalleryUrl] = useState("")
 
   // Reset edit mode
   const handleEditToggle = () => {
     setIsEditing((prev) => !prev);
-    // Reset rich text fields when toggling
     if (!isEditing) {
       setDescription(product.description)
       setDetails(product.details || "")
       setCareInstructions(product.careInstructions || "")
-      setFeaturedImageUrl(product.featuredImageUrl)
-      setNewGalleryImages([])
+      setFeaturedImageUrl(product.featuredImageUrl || "")
+      setGalleryUrls(product.galleryImages?.map(img => img.url) || [])
+      setNewGalleryUrl("")
     }
   };
 
+  const addGalleryUrl = () => {
+    if (newGalleryUrl.trim() && !galleryUrls.includes(newGalleryUrl.trim())) {
+      setGalleryUrls([...galleryUrls, newGalleryUrl.trim()])
+      setNewGalleryUrl("")
+    }
+  }
+
+  const removeGalleryUrl = (urlToRemove: string) => {
+    setGalleryUrls(galleryUrls.filter((url) => url !== urlToRemove))
+  }
+
   const [updateState, updateAction, isUpdating] = useActionState<ActionState, FormData>(
     async (prev, formData) => {
+      // Add gallery URLs manually since they're not inputs in a simple form anymore
+      galleryUrls.forEach(url => formData.append("galleryImageUrls", url))
+
       const result = await updateProductAction(prev, formData)
       if (result.success) {
         setIsEditing(false)
@@ -97,158 +104,183 @@ export function ProductListItem({ product, categories, mediaLibrary }: ProductLi
     initialState
   )
 
-  const handleRemoveGalleryImage = async (imageUrl: string) => {
-    if (!window.confirm("Remove this image from the gallery?")) return
-
-    setRemovingImageUrl(imageUrl)
-    const formData = new FormData()
-    formData.append("productId", product.id)
-    formData.append("imageUrl", imageUrl)
-
-    const result = await deleteProductImageAction(null, formData)
-    setRemovingImageUrl(null)
-
-    if (result.success) {
-      router.refresh()
-    } else {
-      alert(result.error || "Failed to remove image")
-    }
-  }
-
-  const handleRemoveFeaturedImage = async () => {
-    if (!window.confirm("Remove the featured image?")) return
-
-    const formData = new FormData()
-    formData.append("productId", product.id)
-
-    const result = await removeFeaturedImageAction(null, formData)
-
-    if (result.success) {
-      router.refresh()
-    } else {
-      alert(result.error || "Failed to remove featured image")
-    }
-  }
-
-
+  const inputClasses = "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm outline-none focus:border-[#B3702B] focus:ring-2 focus:ring-[#B3702B]/20 transition-all placeholder:text-muted-foreground/50"
 
   return (
-    <div className="flex flex-col md:flex-row gap-6 rounded-3xl border border-white/10 bg-white/90 p-[10px] md:p-6 shadow-lg transition-all hover:border-primary/40 hover:shadow-2xl relative">
+    <div className={`group relative flex flex-col gap-6 rounded-[2.5rem] border border-white/10 bg-white/5 p-4 md:p-6 transition-all duration-500 hover:bg-white/[0.08] hover:shadow-2xl hover:shadow-[#B3702B]/5 ${isEditing ? 'border-[#B3702B]/30' : ''}`}>
       {!isEditing && (
-        <div className="relative w-full max-w-[140px] aspect-square overflow-hidden rounded-2xl bg-gray-100 flex-shrink-0 flex items-center justify-center border border-gray-200">
-          {product.featuredImageUrl ? (
-            <Image
-              src={product.featuredImageUrl}
-              alt={product.featuredImageAlt ?? product.title}
-              fill
-              className="object-cover"
-              sizes="140px"
-            />
-          ) : (
-            <span className="text-xs text-gray-400">No image</span>
-          )}
+        <div className="flex flex-col md:flex-row gap-6">
+          {/* Product Image */}
+          <div className="relative w-full md:w-48 aspect-square overflow-hidden rounded-3xl bg-white/5 flex-shrink-0 border border-white/5 shadow-inner">
+            {product.featuredImageUrl ? (
+              <Image
+                src={product.featuredImageUrl}
+                alt={product.featuredImageAlt ?? product.title}
+                fill
+                className="object-cover transition-transform duration-700 group-hover:scale-110"
+                sizes="(max-width: 768px) 100vw, 192px"
+              />
+            ) : (
+              <div className="flex flex-col items-center justify-center h-full text-muted-foreground/30">
+                <Package className="w-12 h-12 mb-2" />
+                <span className="text-xs font-medium">No Image</span>
+              </div>
+            )}
+
+            {/* Overlay Badges */}
+            <div className="absolute top-3 left-3 flex flex-col gap-1.5">
+              <span className={`flex items-center gap-1 xl rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-wider shadow-lg backdrop-blur-md ${product.published
+                  ? "bg-green-500/80 text-white"
+                  : "bg-white/20 text-white"
+                }`}>
+                {product.published ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
+                {product.published ? "Live" : "Draft"}
+              </span>
+            </div>
+          </div>
+
+          {/* Product Info */}
+          <div className="flex flex-col flex-1 min-w-0 py-2">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div className="space-y-1">
+                <h3 className="text-2xl font-bold text-foreground group-hover:text-[#B3702B] transition-colors line-clamp-1">{product.title}</h3>
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Layers className="w-4 h-4" />
+                  <span className="text-xs font-semibold uppercase tracking-wider">{product.categoryName ?? "Uncategorised"}</span>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="text-2xl font-black text-[#B3702B]">{product.priceLabel}</p>
+                <p className="text-xs font-medium text-muted-foreground mt-1">
+                  Qty: <span className={product.inventory > 0 ? "text-foreground font-bold" : "text-red-500 font-bold"}>{product.inventory}</span> in stock
+                </p>
+              </div>
+            </div>
+
+            <p className="text-sm text-muted-foreground leading-relaxed mt-4 line-clamp-3">
+              {product.description.replace(/<[^>]*>/g, '')}
+            </p>
+
+            {/* Tags */}
+            {product.tags && product.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mt-4">
+                {product.tags.map(tag => (
+                  <span key={tag} className="flex items-center gap-1 rounded-lg bg-white/5 border border-white/5 px-2 py-0.5 text-[10px] font-bold text-[#B3702B]">
+                    <TagIcon className="w-3 h-3" />
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {/* Actions */}
+            <div className="flex items-center gap-3 mt-auto pt-6">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleEditToggle}
+                className="rounded-xl border-white/10 bg-white/5 hover:bg-[#B3702B]/10 hover:text-[#B3702B] hover:border-[#B3702B]/30 transition-all font-bold text-xs"
+              >
+                <Pencil className="w-3.5 h-3.5 mr-2" /> Edit
+              </Button>
+              <form action={deleteAction} className="inline">
+                <input type="hidden" name="productId" value={product.id} />
+                <Button
+                  type="submit"
+                  variant="ghost"
+                  size="sm"
+                  className="rounded-xl text-muted-foreground hover:bg-red-500/10 hover:text-red-500 transition-all font-bold text-xs"
+                  disabled={isDeleting}
+                  onClick={(e) => {
+                    if (!window.confirm(`Delete "${product.title}"? This cannot be undone.`)) {
+                      e.preventDefault()
+                    }
+                  }}
+                >
+                  <Trash className="w-3.5 h-3.5 mr-2" /> {isDeleting ? "..." : "Delete"}
+                </Button>
+              </form>
+            </div>
+          </div>
         </div>
       )}
 
-      <div className="flex flex-col gap-2 flex-1 min-w-0">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="min-w-0">
-            <p className="text-lg font-semibold text-gray-900 truncate">{product.title}</p>
-            <p className="text-xs text-gray-500 truncate">
-              {product.categoryName ?? "Uncategorised"}
-            </p>
-          </div>
-          <div className="flex flex-col items-end gap-1 text-sm">
-            <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-primary font-bold text-sm">
-              {product.priceLabel}
-            </span>
-            <span className={`text-xs ${product.published ? "text-green-600" : "text-gray-400"}`}>
-              {product.published ? "Published" : "Draft"}
-            </span>
-          </div>
-        </div>
+      {/* Edit Form */}
+      {isEditing && (
+        <form action={updateAction} className="space-y-8 animate-in fade-in slide-in-from-top-4 duration-500">
+          <input type="hidden" name="productId" value={product.id} />
 
-        <p className="text-sm text-gray-700 line-clamp-2 mt-1">{product.description}</p>
-
-
-        <div className="flex flex-wrap items-center gap-2 mt-2">
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            className="flex items-center gap-1"
-            onClick={handleEditToggle}
-          >
-            {isEditing ? <X className="size-3.5" /> : <Pencil className="size-3.5" />}
-            {isEditing ? "Cancel" : "Edit"}
-          </Button>
-          <form action={deleteAction}>
-            <input type="hidden" name="productId" value={product.id} />
+          <div className="flex items-center justify-between border-b border-white/10 pb-4">
+            <h3 className="text-xl font-bold flex items-center gap-2">
+              <Pencil className="w-5 h-5 text-[#B3702B]" /> Editing Product
+            </h3>
             <Button
-              type="submit"
-              variant="destructive"
-              size="sm"
-              className="flex items-center gap-1"
-              disabled={isDeleting}
-              onClick={(event) => {
-                const confirmed = window.confirm(
-                  `Delete "${product.title}"? This action cannot be undone.`
-                )
-                if (!confirmed) {
-                  event.preventDefault()
-                  event.stopPropagation()
-                }
-              }}
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={handleEditToggle}
+              className="rounded-full hover:bg-white/5"
             >
-              <Trash className="size-3.5" />
-              {isDeleting ? "Deleting…" : "Delete"}
+              <X className="w-5 h-5" />
             </Button>
-          </form>
-        </div>
+          </div>
 
-        {(deleteState.error || deleteState.success) && (
-          <p className={`text-xs ${deleteState.error ? "text-destructive" : "text-primary"}`}>
-            {deleteState.error ?? deleteState.success}
-          </p>
-        )}
+          <div className="grid gap-8">
+            {/* Title & Category */}
+            <div className="grid gap-6 md:grid-cols-2">
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Title</label>
+                <input
+                  name="title"
+                  defaultValue={product.title}
+                  required
+                  className={inputClasses}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Category</label>
+                <select
+                  name="categoryId"
+                  defaultValue={product.categoryId}
+                  required
+                  className={inputClasses}
+                >
+                  {categories.map((c) => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
 
-        {isEditing && (
-          <form
-            action={updateAction}
-            className="space-y-4 rounded-2xl border border-white/10 bg-background/80 p-4"
-          >
-            <input type="hidden" name="productId" value={product.id} />
-            {/* Tags input/select */}
-            <div className="grid gap-3">
-              <label className="text-sm font-medium" htmlFor={`${product.id}-tags`}>
-                Tags
-              </label>
-              <input
-                id={`${product.id}-tags`}
-                name="tags"
-                type="text"
-                defaultValue={product.tags ? product.tags.join(", ") : ""}
-                placeholder="e.g. wool, winter, luxury"
-                className="rounded-md border bg-background px-3 py-2 text-sm outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/40"
-              />
-              <p className="text-xs text-muted-foreground">Comma-separated (e.g. wool, winter, luxury)</p>
+            {/* Price & Inventory */}
+            <div className="grid gap-6 md:grid-cols-2">
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Price (PKR)</label>
+                <input
+                  name="price"
+                  type="number"
+                  step="0.01"
+                  defaultValue={product.price}
+                  required
+                  className={inputClasses}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Inventory</label>
+                <input
+                  name="inventory"
+                  type="number"
+                  defaultValue={product.inventory}
+                  required
+                  className={inputClasses}
+                />
+              </div>
             </div>
-            <div className="grid gap-3">
-              <label className="text-sm font-medium" htmlFor={`${product.id}-title`}>
-                Title
-              </label>
-              <input
-                id={`${product.id}-title`}
-                name="title"
-                defaultValue={product.title}
-                required
-                className="rounded-md border bg-background px-3 py-2 text-sm outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/40"
-              />
-            </div>
-            <div className="grid gap-3">
-              <label className="text-sm font-medium" htmlFor={`${product.id}-description`}>
-                Description
-              </label>
+
+            {/* Description */}
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Description</label>
               <RichTextEditor
                 content={description}
                 onChange={setDescription}
@@ -256,160 +288,125 @@ export function ProductListItem({ product, categories, mediaLibrary }: ProductLi
               />
               <input type="hidden" name="description" value={description} />
             </div>
-            <div className="grid gap-3">
-              <label className="text-sm font-medium" htmlFor={`${product.id}-details`}>
-                Product Details
-              </label>
-              <RichTextEditor
-                content={details}
-                onChange={setDetails}
-                id={`${product.id}-details`}
-                placeholder="Material, dimensions, origin, certification details"
-              />
-              <input type="hidden" name="details" value={details} />
-              <p className="text-xs text-muted-foreground">Optional - Shows in Details tab</p>
-            </div>
-            <div className="grid gap-3">
-              <label className="text-sm font-medium" htmlFor={`${product.id}-care`}>
-                Care Instructions
-              </label>
-              <RichTextEditor
-                content={careInstructions}
-                onChange={setCareInstructions}
-                id={`${product.id}-care`}
-                placeholder="Cleaning, storage, handling instructions"
-              />
-              <input type="hidden" name="careInstructions" value={careInstructions} />
-              <p className="text-xs text-muted-foreground">Optional - Shows in Care tab</p>
-            </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <label className="text-sm font-medium" htmlFor={`${product.id}-price`}>
-                Price (PKR)
-                <input
-                  id={`${product.id}-price`}
-                  name="price"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  defaultValue={product.price}
-                  required
-                  className="mt-2 w-full rounded-md border bg-background px-3 py-2 text-sm outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/40"
-                />
-              </label>
-              <label className="text-sm font-medium" htmlFor={`${product.id}-inventory`}>
-                Inventory
-                <input
-                  id={`${product.id}-inventory`}
-                  name="inventory"
-                  type="number"
-                  min="0"
-                  defaultValue={product.inventory}
-                  className="mt-2 w-full rounded-md border bg-background px-3 py-2 text-sm outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/40"
-                />
-              </label>
-            </div>
-            <div className="grid gap-3">
-              <label className="text-sm font-medium" htmlFor={`${product.id}-category`}>
-                Category
-              </label>
-              <select
-                id={`${product.id}-category`}
-                name="categoryId"
-                defaultValue={product.categoryId}
-                required
-                className="rounded-md border bg-background px-3 py-2 text-sm outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/40"
-              >
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="grid gap-3">
-              <label className="text-sm font-medium">Featured image</label>
-              <input type="hidden" name="featuredImageUrl" value={featuredImageUrl || ""} />
-              <ImageUpload
-                value={featuredImageUrl}
-                onChange={setFeaturedImageUrl}
-                label="Click to upload featured image"
-              />
-              <p className="text-xs text-muted-foreground">
-                This image will act as the main product image.
-              </p>
 
-              <label className="text-sm font-medium" htmlFor={`${product.id}-featured-alt`}>
-                Featured image alt text
-              </label>
-              <input
-                id={`${product.id}-featured-alt`}
-                name="featuredImageAlt"
-                type="text"
-                defaultValue={product.featuredImageAlt ?? ""}
-                placeholder="Describe the product image for accessibility"
-                className="rounded-md border bg-background px-3 py-2 text-sm outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/40"
-              />
-            </div>
-            <div className="grid gap-3">
-              <label className="text-sm font-medium">Gallery images</label>
-
-              {/* Show current gallery images */}
-              <div className="flex flex-wrap gap-2">
-                {product.galleryImages?.map((img, idx) => (
-                  <div key={`old-${idx}`} className="relative w-20 h-20 rounded-md overflow-hidden border border-white/10 group">
-                    <Image src={img.url} alt={img.alt ?? ""} fill className="object-cover" />
+            {/* Images - URL Based */}
+            <div className="grid gap-8 md:grid-cols-2">
+              {/* Featured Image URL */}
+              <div className="space-y-4">
+                <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider block">Featured Image URL</label>
+                <div className="flex gap-2">
+                  <input
+                    name="featuredImageUrl"
+                    value={featuredImageUrl}
+                    onChange={(e) => setFeaturedImageUrl(e.target.value)}
+                    placeholder="https://example.com/image.jpg"
+                    className={inputClasses}
+                  />
+                </div>
+                {featuredImageUrl && (
+                  <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-white/10 group">
+                    <Image src={featuredImageUrl} alt="Preview" fill className="object-cover" />
                     <button
                       type="button"
-                      onClick={() => handleRemoveGalleryImage(img.url)}
-                      disabled={removingImageUrl === img.url}
-                      className="absolute top-1 right-1 bg-destructive text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={() => setFeaturedImageUrl("")}
+                      className="absolute top-2 right-2 p-1.5 rounded-lg bg-red-500/80 text-white opacity-0 group-hover:opacity-100 transition-opacity"
                     >
-                      <X className="size-3" />
+                      <X className="w-4 h-4" />
                     </button>
                   </div>
-                ))}
-                {/* Show newly uploaded gallery images */}
-                {newGalleryImages.map((url, idx) => (
-                  <div key={`new-${idx}`} className="relative w-20 h-20 rounded-md overflow-hidden border border-blue-500 border-2">
-                    <Image src={url} alt="New" fill className="object-cover" />
-                    <button
-                      type="button"
-                      onClick={() => setNewGalleryImages(prev => prev.filter(u => u !== url))}
-                      className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
-                    >
-                      <X className="size-3" />
-                    </button>
-                    <input type="hidden" name="galleryImageUrls" value={url} />
-                  </div>
-                ))}
+                )}
               </div>
 
-              <p className="text-sm font-medium mt-2">Add more images</p>
-              <ImageUpload
-                value={null}
-                onChange={(url) => {
-                  if (url) setNewGalleryImages(prev => [...prev, url])
-                }}
-                label="Add gallery image (multiple allowed)"
-                multiple={true}
-              />
+              {/* Gallery URLS */}
+              <div className="space-y-4">
+                <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider block">Gallery Image URLs</label>
+                <div className="flex gap-2">
+                  <input
+                    value={newGalleryUrl}
+                    onChange={(e) => setNewGalleryUrl(e.target.value)}
+                    placeholder="https://example.com/gallery.jpg"
+                    className={inputClasses}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault()
+                        addGalleryUrl()
+                      }
+                    }}
+                  />
+                  <Button type="button" onClick={addGalleryUrl} variant="outline" className="shrink-0 rounded-xl">Add</Button>
+                </div>
+
+                <div className="grid grid-cols-3 gap-3">
+                  {galleryUrls.map((url, idx) => (
+                    <div key={idx} className="relative aspect-square rounded-xl overflow-hidden border border-white/10 group">
+                      <Image src={url} alt="Gallery" fill className="object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => removeGalleryUrl(url)}
+                        className="absolute top-1 right-1 p-1 rounded-lg bg-red-500/80 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
 
+            {/* Toggle Published */}
+            <div className="flex items-center gap-3 py-2">
+              <div className="relative">
+                <input type="checkbox" name="published" defaultChecked={product.published} className="sr-only peer" />
+                <div className="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#B3702B]"></div>
+              </div>
+              <span className="text-sm font-bold text-foreground">Published & Live</span>
+            </div>
 
-            <label className="flex items-center gap-2 text-sm font-medium">
-              <input type="checkbox" name="published" defaultChecked={product.published} />
-              Publish product
-            </label>
+            {/* Tags */}
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Tags (comma-separated)</label>
+              <input
+                name="tags"
+                type="text"
+                defaultValue={product.tags?.join(", ") || ""}
+                placeholder="e.g. wool, winter, luxury"
+                className={inputClasses}
+              />
+            </div>
+          </div>
 
-            {updateState.error && <p className="text-sm text-destructive">{updateState.error}</p>}
-            {updateState.success && <p className="text-sm text-primary">{updateState.success}</p>}
+          <div className="flex flex-col gap-4 pt-4 border-t border-white/10">
+            {updateState.error && (
+              <div className="text-sm font-bold text-red-500 p-3 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center gap-2">
+                <AlertCircle className="w-4 h-4" /> {updateState.error}
+              </div>
+            )}
+            {updateState.success && (
+              <div className="text-sm font-bold text-green-500 p-3 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4" /> {updateState.success}
+              </div>
+            )}
 
-            <Button type="submit" disabled={isUpdating} size="sm">
-              {isUpdating ? "Saving…" : "Save changes"}
-            </Button>
-          </form>
-        )}
-      </div>
+            <div className="flex gap-4">
+              <Button
+                type="submit"
+                disabled={isUpdating}
+                className="flex-1 bg-gradient-to-r from-[#B3702B] to-[#8B5A2B] text-white border-0 font-black tracking-widest uppercase py-6 rounded-2xl shadow-xl shadow-[#B3702B]/20 transition-all hover:shadow-[#B3702B]/40 active:scale-95"
+              >
+                {isUpdating ? "Saving..." : "Save Product Changes"}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleEditToggle}
+                className="rounded-2xl border-white/10 px-8"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </form>
+      )}
     </div>
   )
 }

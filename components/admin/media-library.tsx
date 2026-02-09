@@ -3,7 +3,7 @@
 import { useActionState, useEffect, useMemo, useState } from "react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { Check, Copy, Pencil, Trash, X } from "lucide-react"
+import { Check, Copy, Pencil, Trash, X, Calendar, ImageIcon, AlertCircle } from "lucide-react"
 
 import { deleteMediaAction, updateMediaAction } from "@/app/admin/actions"
 import { Button } from "@/components/ui/button"
@@ -49,7 +49,6 @@ function MediaCard({ item }: { item: MediaLibraryItem }) {
 
   useEffect(() => {
     if (!copied) return
-
     const timeout = setTimeout(() => setCopied(false), 2000)
     return () => clearTimeout(timeout)
   }, [copied])
@@ -59,180 +58,129 @@ function MediaCard({ item }: { item: MediaLibraryItem }) {
     const link = item.url.startsWith("http") ? item.url : `${origin}${item.url}`
 
     try {
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(link)
-        setCopied(true)
-        return
-      }
-      throw new Error("Clipboard API unavailable")
+      await navigator.clipboard.writeText(link)
+      setCopied(true)
     } catch (error) {
-      console.warn("Falling back to legacy copy", error)
-      try {
-        const textarea = document.createElement("textarea")
-        textarea.value = link
-        textarea.setAttribute("readonly", "")
-        textarea.style.position = "absolute"
-        textarea.style.left = "-9999px"
-        document.body.appendChild(textarea)
-        textarea.select()
-        const successful = document.execCommand("copy")
-        document.body.removeChild(textarea)
-        if (!successful) {
-          throw new Error("execCommand copy failed")
-        }
-        setCopied(true)
-        return
-      } catch (fallbackError) {
-        console.error("Failed to copy media link", fallbackError)
-        setCopied(false)
-      }
+      console.error("Failed to copy", error)
     }
   }
 
-  const editButtonLabel = isEditing ? "Cancel" : "Edit details"
   const isExternal = item.url.startsWith("http://") || item.url.startsWith("https://")
-  
-  // Check if it's a valid image extension
   const imageExtensions = /\.(jpg|jpeg|png|gif|webp|svg|avif|bmp|ico)$/i
   const isImage = imageExtensions.test(item.url)
 
+  const inputClasses = "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm outline-none focus:border-[#B3702B] focus:ring-2 focus:ring-[#B3702B]/20 transition-all placeholder:text-muted-foreground/50"
+
   return (
-    <li className="overflow-hidden rounded-2xl border border-white/10 bg-background/80 shadow-sm">
-      <div className="relative aspect-[4/3] overflow-hidden border-b border-white/5 bg-gray-100">
+    <li className="group relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 transition-all duration-500 hover:bg-white/[0.08] hover:shadow-2xl hover:shadow-[#B3702B]/5">
+      {/* Image Preview Container */}
+      <div className="relative aspect-[4/3] overflow-hidden bg-white/5">
         {isImage ? (
           imageError || isExternal ? (
-            <>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={item.url}
-                alt={item.alt ?? "Uploaded media"}
-                className="h-full w-full object-cover"
-                loading="lazy"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement
-                  target.style.display = 'none'
-                  const parent = target.parentElement
-                  if (parent) {
-                    parent.innerHTML = `<div class="flex h-full items-center justify-center text-xs text-gray-500 p-4 text-center">Failed to load image<br/><span class="text-[10px] mt-1">${item.url}</span></div>`
-                  }
-                }}
-              />
-            </>
+            <img
+              src={item.url}
+              alt={item.alt ?? "Media"}
+              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+              loading="lazy"
+              onError={() => setImageError(true)}
+            />
           ) : (
             <Image
               src={item.url}
-              alt={item.alt ?? "Uploaded media"}
+              alt={item.alt ?? "Media"}
               fill
               sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-              className="object-cover"
-              unoptimized={item.url.endsWith('.svg') || item.url.endsWith('.png')}
+              className="object-cover transition-transform duration-700 group-hover:scale-110"
+              unoptimized={item.url.endsWith('.svg')}
               onError={() => setImageError(true)}
             />
           )
         ) : (
-          <div className="flex h-full items-center justify-center text-xs text-gray-500">
-            Non-image file
+          <div className="flex h-full flex-col items-center justify-center gap-2 text-muted-foreground/30">
+            <ImageIcon className="h-10 w-10" />
+            <span className="text-[10px] uppercase tracking-widest font-bold">Files Asset</span>
           </div>
         )}
-      </div>
-      <div className="space-y-3 p-4 text-sm">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div>
-            <p className="font-medium text-foreground">{item.alt ?? "No alt text provided"}</p>
-            <p className="text-xs text-muted-foreground">Uploaded {item.uploadedAtLabel}</p>
-          </div>
+
+        {/* Floating Actions Overlay */}
+        <div className="absolute inset-0 bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100 flex items-center justify-center gap-2 backdrop-blur-sm">
           <Button
             type="button"
-            variant="secondary"
+            variant="outline"
             size="sm"
             onClick={handleCopyLink}
-            className="flex items-center gap-1"
+            className="rounded-xl border-white/20 bg-white/10 text-white hover:bg-[#B3702B] hover:border-[#B3702B] transition-all font-bold text-xs"
           >
-            {copied ? (
-              <>
-                <Check className="size-3.5" /> Copied
-              </>
-            ) : (
-              <>
-                <Copy className="size-3.5" /> Copy link
-              </>
-            )}
+            {copied ? <Check className="h-3.5 w-3.5 mr-1.5" /> : <Copy className="h-3.5 w-3.5 mr-1.5" />}
+            {copied ? "Copied" : "Copy Link"}
           </Button>
-        </div>
-
-        <p className="text-xs text-muted-foreground break-all">{item.url}</p>
-
-        <div className="flex flex-wrap items-center gap-2">
           <Button
             type="button"
-            variant="ghost"
+            variant="outline"
             size="sm"
-            onClick={() => setIsEditing((value) => !value)}
-            className="flex items-center gap-1"
+            onClick={() => setIsEditing(!isEditing)}
+            className="rounded-xl border-white/20 bg-white/10 text-white hover:bg-white/20 transition-all font-bold text-xs"
           >
-            {isEditing ? <X className="size-3.5" /> : <Pencil className="size-3.5" />}
-            {editButtonLabel}
+            <Pencil className="h-3.5 w-3.5 mr-1.5" /> Edit
           </Button>
-          <form action={deleteAction}>
+        </div>
+      </div>
+
+      {/* Info Section */}
+      <div className="p-5 space-y-4">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <h4 className="font-bold text-foreground line-clamp-1">{item.alt ?? "Untitled Asset"}</h4>
+            <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mt-1">
+              <Calendar className="h-3 w-3" /> {item.uploadedAtLabel}
+            </div>
+          </div>
+          <form action={deleteAction} className="shrink-0">
             <input type="hidden" name="id" value={item.id} />
             <Button
               type="submit"
-              variant="destructive"
-              size="sm"
-              className="flex items-center gap-1"
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 rounded-lg text-muted-foreground hover:bg-red-500/10 hover:text-red-500 transition-all"
               disabled={isDeleting}
-              onClick={(event) => {
-                const confirmed = window.confirm("Delete this media asset? This cannot be undone.")
-                if (!confirmed) {
-                  event.preventDefault()
-                  event.stopPropagation()
-                }
+              onClick={(e) => {
+                if (!window.confirm("Delete this asset permanently?")) e.preventDefault()
               }}
             >
-              <Trash className="size-3.5" />
-              {isDeleting ? "Deleting…" : "Delete"}
+              <Trash className="h-4 w-4" />
             </Button>
           </form>
         </div>
 
         {isEditing && (
-          <form action={formAction} className="space-y-3 rounded-2xl border border-white/10 bg-background/70 p-4">
+          <form action={formAction} className="space-y-4 pt-2 animate-in fade-in slide-in-from-top-2">
             <input type="hidden" name="id" value={item.id} />
-            <label className="block text-xs font-medium text-foreground" htmlFor={`${item.id}-alt`}>
-              Alt text
+            <div className="space-y-2">
+              <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Alt Text</label>
               <input
-                id={`${item.id}-alt`}
                 name="alt"
                 defaultValue={item.alt ?? ""}
-                placeholder="Describe the visual for accessibility"
-                className="mt-2 w-full rounded-md border bg-background px-3 py-2 text-sm outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/40"
+                placeholder="Accessibility description..."
+                className={inputClasses}
               />
-            </label>
+            </div>
 
-            {state.error && <p className="text-xs text-destructive">{state.error}</p>}
-            {state.success && <p className="text-xs text-primary">{state.success}</p>}
-
-            <div className="flex items-center gap-2">
-              <Button type="submit" disabled={isPending} size="sm">
-                {isPending ? "Saving…" : "Save changes"}
+            <div className="flex gap-2">
+              <Button type="submit" disabled={isPending} size="sm" className="flex-1 bg-[#B3702B] hover:bg-[#8B5A2B] text-white rounded-xl font-bold">
+                {isPending ? "..." : "Save"}
               </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsEditing(false)}
-              >
+              <Button type="button" onClick={() => setIsEditing(false)} variant="ghost" size="sm" className="rounded-xl font-bold">
                 Cancel
               </Button>
             </div>
+
+            {state?.error && <p className="text-[10px] font-bold text-red-500 px-1">{state.error}</p>}
           </form>
         )}
 
-        {(deleteState.error || deleteState.success) && (
-          <p className={`text-xs ${deleteState.error ? "text-destructive" : "text-primary"}`}>
-            {deleteState.error ?? deleteState.success}
-          </p>
-        )}
+        <div className="flex items-center p-2.5 rounded-xl bg-white/5 border border-white/5 overflow-hidden">
+          <p className="text-[10px] font-mono text-muted-foreground truncate w-full">{item.url}</p>
+        </div>
       </div>
     </li>
   )
@@ -240,13 +188,10 @@ function MediaCard({ item }: { item: MediaLibraryItem }) {
 
 export function MediaLibrary({ items }: { items: MediaLibraryItem[] }) {
   const [currentPage, setCurrentPage] = useState(1)
-  const itemsPerPage = 3
+  const itemsPerPage = 6
 
   const sorted = useMemo(
-    () =>
-      [...items].sort((a, b) =>
-        new Date(b.createdAtISO).getTime() - new Date(a.createdAtISO).getTime()
-      ),
+    () => [...items].sort((a, b) => new Date(b.createdAtISO).getTime() - new Date(a.createdAtISO).getTime()),
     [items]
   )
 
@@ -256,47 +201,58 @@ export function MediaLibrary({ items }: { items: MediaLibraryItem[] }) {
     return sorted.slice(startIndex, startIndex + itemsPerPage)
   }, [sorted, currentPage, itemsPerPage])
 
-  // Reset to page 1 when items change
   useEffect(() => {
-    if (currentPage > totalPages && totalPages > 0) {
-      setCurrentPage(1)
-    }
+    if (currentPage > totalPages && totalPages > 0) setCurrentPage(1)
   }, [items.length, currentPage, totalPages])
 
   if (sorted.length === 0) {
     return (
-      <p className="rounded-2xl border border-dashed border-muted-foreground/30 p-6 text-sm text-muted-foreground">
-        Upload your first asset to start building the media library.
-      </p>
+      <div className="flex flex-col items-center justify-center p-12 rounded-[2.5rem] border border-dashed border-white/10 bg-white/5 text-center">
+        <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-[#B3702B]/10 text-[#B3702B] mb-4">
+          <ImageIcon className="h-8 w-8" />
+        </div>
+        <h3 className="text-xl font-bold text-foreground">Empty Gallery</h3>
+        <p className="text-sm text-muted-foreground mt-2 max-w-[250px]">
+          Your assets will appear here once you add products or categories with image URLs.
+        </p>
+      </div>
     )
   }
 
   return (
-    <div className="space-y-4">
-      <ul className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+    <div className="space-y-8">
+      <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {paginatedItems.map((item) => (
           <MediaCard key={item.id} item={item} />
         ))}
       </ul>
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2 pt-4">
+        <div className="flex items-center justify-center gap-4 pt-6">
           <Button
             variant="outline"
-            size="sm"
             onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
             disabled={currentPage === 1}
+            className="rounded-2xl border-white/10 bg-white/5 hover:bg-[#B3702B]/10 text-foreground"
           >
             Previous
           </Button>
-          <span className="text-sm text-muted-foreground">
-            Page {currentPage} of {totalPages}
-          </span>
+          <div className="flex items-center gap-2">
+            {[...Array(totalPages)].map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentPage(i + 1)}
+                className={`h-2 w-2 rounded-full transition-all duration-300 ${currentPage === i + 1 ? 'bg-[#B3702B] w-6' : 'bg-white/10 hover:bg-white/20'
+                  }`}
+                aria-label={`Page ${i + 1}`}
+              />
+            ))}
+          </div>
           <Button
             variant="outline"
-            size="sm"
             onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
             disabled={currentPage === totalPages}
+            className="rounded-2xl border-white/10 bg-white/5 hover:bg-[#B3702B]/10 text-foreground"
           >
             Next
           </Button>

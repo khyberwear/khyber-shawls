@@ -1,11 +1,10 @@
 // export const runtime = 'edge';
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
 import { CategoryEditForm } from "@/components/admin/category-edit-form";
 import { DeleteCategoryButton } from "@/components/admin/delete-category-button";
-
-
+import { ArrowLeft, Tags, AlertTriangle, Package } from "lucide-react";
 
 type PageProps = { params: { id?: string } | Promise<{ id?: string }> };
 
@@ -26,27 +25,38 @@ export default async function EditCategoryPage({ params }: PageProps) {
   if (!category) notFound();
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 pb-16">
+    <div className="max-w-4xl mx-auto space-y-6 p-4 md:p-8">
+      {/* Back Link */}
+      <Link
+        href="/admin/categories"
+        className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-[#B3702B] transition-colors"
+      >
+        <ArrowLeft className="w-4 h-4" />
+        Back to Categories
+      </Link>
+
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <Link
-            href="/admin/categories"
-            className="text-sm text-amber-700 hover:text-amber-800 mb-2 inline-block"
-          >
-            ← Back to Categories
-          </Link>
-          <h1 className="text-3xl font-semibold text-gray-900">
-            Edit Category: {category.name}
-          </h1>
-          <p className="text-sm text-gray-600 mt-1">
-            {category.products.length} product{category.products.length !== 1 ? 's' : ''} in this category
-          </p>
+      <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-purple-500/10 via-background to-purple-600/5 p-6">
+        <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-purple-500/20 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
+
+        <div className="relative flex items-start gap-4">
+          <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-purple-500/20 text-purple-500">
+            <Tags className="w-6 h-6" />
+          </div>
+          <div className="flex-1">
+            <h1 className="text-2xl font-semibold text-foreground">Edit Category</h1>
+            <p className="text-lg text-[#B3702B] font-medium mt-1">{category.name}</p>
+            <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
+              <Package className="w-4 h-4" />
+              <span>{category.products.length} product{category.products.length !== 1 ? 's' : ''}</span>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Edit Form */}
-      <div className="rounded-2xl border border-gray-200 bg-white p-4 md:p-8 shadow-sm">
+      <div className="rounded-2xl border border-white/10 bg-background/80 backdrop-blur-sm p-6 shadow-lg">
+        <h2 className="text-lg font-semibold text-foreground mb-6">Category Details</h2>
         <CategoryEditForm
           id={category.id}
           name={category.name}
@@ -61,12 +71,19 @@ export default async function EditCategoryPage({ params }: PageProps) {
       </div>
 
       {/* Delete Section */}
-      <div className="rounded-2xl border border-red-200 bg-red-50 p-4 md:p-8">
-        <h2 className="text-lg font-semibold text-gray-900 mb-2">Danger Zone</h2>
-        <p className="text-sm text-gray-600 mb-4">
-          Deleting this category will also remove all associated products. This action cannot be undone.
-        </p>
-        <DeleteCategoryButton id={category.id} />
+      <div className="rounded-2xl border border-red-500/20 bg-red-500/5 p-6">
+        <div className="flex items-start gap-4">
+          <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-red-500/20 text-red-500">
+            <AlertTriangle className="w-5 h-5" />
+          </div>
+          <div className="flex-1">
+            <h2 className="text-lg font-semibold text-foreground mb-1">Danger Zone</h2>
+            <p className="text-sm text-muted-foreground mb-4">
+              Deleting this category will also remove all associated products. This action cannot be undone.
+            </p>
+            <DeleteCategoryButton id={category.id} />
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -11,13 +11,7 @@ const settingsSchema = z.object({
   contactPhone: z.string().optional(),
   contactEmail: z.string().email().optional().or(z.literal("")),
   contactAddress: z.string().optional(),
-  smtpHost: z.string().optional(),
-  smtpPort: z.coerce.number().optional(),
-  smtpUser: z.string().optional(),
-  smtpPass: z.string().optional(),
-  stripePublicKey: z.string().optional(),
-  stripeSecretKey: z.string().optional(),
-  socialLinks: z.string().optional(), // Will be parsed as JSON
+  socialLinks: z.string().optional(), // Expected as a JSON string from the client
 });
 
 export async function updateSettings(formData: FormData) {
@@ -25,12 +19,19 @@ export async function updateSettings(formData: FormData) {
   const parsed = settingsSchema.safeParse(data);
 
   if (!parsed.success) {
-    return { error: "Invalid data" };
+    console.error("Settings validation failed:", parsed.error.issues);
+    return { error: "Invalid data: " + parsed.error.issues.map(i => i.message).join(", ") };
   }
 
+  // We store socialLinks as a JSON string in the database String field
   const settingsData = {
-    ...parsed.data,
-    socialLinks: parsed.data.socialLinks ? JSON.parse(parsed.data.socialLinks) : undefined,
+    websiteName: parsed.data.websiteName,
+    websiteLogoUrl: parsed.data.websiteLogoUrl,
+    websiteFaviconUrl: parsed.data.websiteFaviconUrl,
+    contactPhone: parsed.data.contactPhone,
+    contactEmail: parsed.data.contactEmail,
+    contactAddress: parsed.data.contactAddress,
+    socialLinks: parsed.data.socialLinks,
   };
 
   try {
@@ -46,9 +47,10 @@ export async function updateSettings(formData: FormData) {
       });
     }
     revalidatePath("/admin/settings");
+    revalidatePath("/", "layout");
     return { success: "Settings updated successfully." };
   } catch (error) {
-    console.error(error);
+    console.error("Error updating settings:", error);
     return { error: "Failed to update settings." };
   }
 }
