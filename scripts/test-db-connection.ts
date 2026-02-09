@@ -6,9 +6,9 @@ const prisma = new PrismaClient();
 async function main() {
     console.log('\n');
     console.log('╔════════════════════════════════════════════════════╗');
-    console.log('║           MONGODB CONNECTION TEST SUITE            ║');
+    console.log('║           DATABASE CONNECTION TEST SUITE           ║');
     console.log('╚════════════════════════════════════════════════════╝');
-    console.log('\n🔍 Testing Prisma Connection to MongoDB...');
+    console.log('\n🔍 Testing Prisma Connection...');
     console.log('━'.repeat(50));
 
     try {

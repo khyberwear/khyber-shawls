@@ -3,12 +3,13 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
-  url      = env("MONGODB_URI")
+  provider = "postgresql"
+  url      = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
 model User {
-  id             String         @id @default(cuid()) @map("_id")
+  id             String         @id @default(cuid())
   email          String         @unique
   name           String?
   password       String
@@ -22,7 +23,7 @@ model User {
 }
 
 model ContactEntry {
-  id        String   @id @default(cuid()) @map("_id")
+  id        String   @id @default(cuid())
   name      String
   email     String
   message   String
@@ -35,7 +36,7 @@ model ContactEntry {
 }
 
 model Category {
-  id               String    @id @default(cuid()) @map("_id")
+  id               String    @id @default(cuid())
   name             String    @unique
   slug             String    @unique
   summary          String?
@@ -43,9 +44,9 @@ model Category {
   featuredImageAlt String?
   seoTitle         String?
   seoDescription   String?
-  intro            String?   // JSON: { title, description, image: { url, alt } }
-  sections         String?   // JSON: [{ title, description, image: { url, alt } }]
-  uiConfig         String?   // JSON: { showFilters, gridColumns: { mobile, tablet, desktop } }
+  intro            String?   // JSON
+  sections         String?   // JSON
+  uiConfig         String?   // JSON
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
   products         Product[]
@@ -54,7 +55,7 @@ model Category {
 }
 
 model Product {
-  id               String             @id @default(cuid()) @map("_id")
+  id               String             @id @default(cuid())
   name             String
   description      String
   details          String?
@@ -72,23 +73,18 @@ model Product {
   product_variants product_variants[]
   category         Category           @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   
-  // Self-Relation M-N (Related Products)
-  relatedProductIDs String[]
-  products_A        Product[]          @relation("RelatedProducts", fields: [relatedProductIDs], references: [id])
+  // Implicit Many-to-Many Relations (Much cleaner in SQL)
+  relatedProducts  Product[]          @relation("RelatedProducts")
+  relatedTo        Product[]          @relation("RelatedProducts")
   
-  referencedByProductIDs String[]
-  products_B        Product[]          @relation("RelatedProducts", fields: [referencedByProductIDs], references: [id])
-  
-  // M-N with Tags
-  tagIDs            String[]
-  tags              Tag[]              @relation("ProductTags", fields: [tagIDs], references: [id])
+  tags             Tag[]              @relation("ProductTags")
 
   @@index([categoryId], map: "products_categoryId_idx")
   @@map("products")
 }
 
 model Customer {
-  id        String   @id @default(cuid()) @map("_id")
+  id        String   @id @default(cuid())
   name      String
   email     String   @unique
   phone     String?
@@ -100,7 +96,7 @@ model Customer {
 }
 
 model Order {
-  id              String      @id @default(cuid()) @map("_id")
+  id              String      @id @default(cuid())
   userId          String?
   customerName    String
   customerEmail   String
@@ -112,11 +108,10 @@ model Order {
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
   items           OrderItem[]
-
 }
 
 model OrderItem {
-  id        String   @id @default(cuid()) @map("_id")
+  id        String   @id @default(cuid())
   order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
   orderId   String
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
@@ -130,14 +125,13 @@ model OrderItem {
 }
 
 model Tag {
-  id         String    @id @default(cuid()) @map("_id")
-  name       String    @unique
-  productIDs String[]
-  products   Product[] @relation("ProductTags", fields: [productIDs], references: [id])
+  id       String    @id @default(cuid())
+  name     String    @unique
+  products Product[] @relation("ProductTags")
 }
 
 model BlogPost {
-  id        String   @id @default(cuid()) @map("_id")
+  id        String   @id @default(cuid())
   title     String
   slug      String   @unique
   excerpt   String?
@@ -154,7 +148,7 @@ model BlogPost {
 }
 
 model Media {
-  id        String      @id @default(cuid()) @map("_id")
+  id        String      @id @default(cuid())
   url       String
   alt       String?
   createdAt DateTime    @default(now())
@@ -165,7 +159,7 @@ model Media {
 }
 
 model HeroMedia {
-  id                String   @id @default(cuid()) @map("_id")
+  id                String   @id @default(cuid())
   key               String   @unique
   title             String?
   subtitle          String?
@@ -182,7 +176,7 @@ model HeroMedia {
 }
 
 model Settings {
-  id                String  @id @default(cuid()) @map("_id")
+  id                String  @id @default(cuid())
   websiteName       String?
   websiteLogoUrl    String?
   websiteFaviconUrl String?
@@ -201,7 +195,7 @@ model Settings {
 }
 
 model product_images {
-  id        String   @id @default(cuid()) @map("_id")
+  id        String   @id @default(cuid())
   url       String
   alt       String?
   productId String
@@ -214,7 +208,7 @@ model product_images {
 }
 
 model product_variants {
-  id        String   @id @default(cuid()) @map("_id")
+  id        String   @id @default(cuid())
   name      String
   sku       String   @unique
   price     Float?
