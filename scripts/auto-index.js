@@ -4,13 +4,7 @@ require('dotenv').config()
 const fs = require('fs')
 const path = require('path')
 
-const prisma = new PrismaClient({
-  datasources: {
-    db: {
-      url: `file:${path.join(process.cwd(), 'prisma', 'dev.db')}`,
-    },
-  },
-})
+const prisma = new PrismaClient()
 const fetchFn = typeof globalThis.fetch === 'function' ? (...args) => globalThis.fetch(...args) : null
 
 const DEFAULT_BASE_URL = 'https://khybershawls.store'
