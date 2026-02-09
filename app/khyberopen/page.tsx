@@ -2,6 +2,8 @@
 import LoginForm from './login-form';
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { Suspense } from 'react';
+import { Loader2 } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Login',
@@ -50,8 +52,17 @@ export default function LoginPage() {
               </p>
             </div>
 
-            {/* Form */}
-            <LoginForm />
+            {/* Form wrapped in Suspense for useSearchParams */}
+            <div className="min-h-[200px]">
+              <Suspense fallback={
+                <div className="flex flex-col items-center justify-center py-10 space-y-4">
+                  <Loader2 className="h-8 w-8 animate-spin text-[#B3702B]" />
+                  <p className="text-sm text-muted-foreground">Preparing login...</p>
+                </div>
+              }>
+                <LoginForm />
+              </Suspense>
+            </div>
 
             {/* Footer */}
             <div className="mt-8 pt-6 border-t border-white/10">
