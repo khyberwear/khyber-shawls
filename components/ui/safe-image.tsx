@@ -1,32 +1,33 @@
 "use client"
 
 import Image, { ImageProps } from "next/image"
-import { useState, useEffect } from "react"
+import { useState, useMemo } from "react"
 
 interface SafeImageProps extends ImageProps {
     fallbackSrc?: string
 }
 
 export function SafeImage({ src, alt, fallbackSrc = "/placeholder.svg", className, ...props }: SafeImageProps) {
-    const [error, setError] = useState(false)
-    const [imgSrc, setImgSrc] = useState(src)
+    const [errorKey, setErrorKey] = useState<string | null>(null)
 
-    useEffect(() => {
-        setImgSrc(src)
-        setError(false)
-    }, [src])
+    // Reset error state when src changes by tracking the src that errored
+    const hasError = errorKey === String(src)
+
+    // Compute the actual source to use
+    const imgSrc = useMemo(() => {
+        return hasError ? fallbackSrc : src
+    }, [src, hasError, fallbackSrc])
 
     const handleError = () => {
-        if (!error) {
-            setError(true)
-            setImgSrc(fallbackSrc)
+        if (!hasError) {
+            setErrorKey(String(src))
         }
     }
 
     return (
         <Image
             {...props}
-            src={error ? fallbackSrc : imgSrc}
+            src={imgSrc}
             alt={alt}
             className={className}
             onError={handleError}

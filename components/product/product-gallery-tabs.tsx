@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react"
 import { SafeImage } from "@/components/ui/safe-image"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 import { CheckCircle2, ShieldCheck, Truck } from "lucide-react"
 import { useCart } from "@/components/providers/cart-provider"
 
@@ -54,7 +55,7 @@ export function ProductGalleryTabs({
   formattedPrice,
   trustSignals,
   categorySlug,
-  slug,
+  // slug is passed but used for SEO/structured data elsewhere
   inStock,
 }: ProductGalleryTabsProps) {
   const [activeImage, setActiveImage] = useState(mainImageUrl)
@@ -113,15 +114,15 @@ export function ProductGalleryTabs({
       {/* Breadcrumb at the top - hide on mobile */}
       <nav className="hidden sm:flex mb-6 text-sm text-gray-500" aria-label="Breadcrumb">
         <div className="flex flex-wrap items-center gap-2">
-          <a href="/" className="hover:text-gray-900 transition">Home</a>
+          <Link href="/" className="hover:text-gray-900 transition">Home</Link>
           <span>/</span>
-          <a href="/products" className="hover:text-gray-900 transition">Products</a>
+          <Link href="/products" className="hover:text-gray-900 transition">Products</Link>
           {categorySlug && categoryName && (
             <>
               <span>/</span>
-              <a href={`/category/${categorySlug}`} className="hover:text-gray-900 transition">
+              <Link href={`/category/${categorySlug}`} className="hover:text-gray-900 transition">
                 {categoryName}
-              </a>
+              </Link>
             </>
           )}
           <span>/</span>
