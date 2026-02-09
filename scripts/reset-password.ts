@@ -123,8 +123,8 @@ async function main() {
 
             // If update fails, try raw insert to bypass Prisma READ issues if any
             // Note: We need a valid CUID for ID.
-            const { v4: uuidv4 } = require('uuid'); // Might not be available
-            // Fallback to simple random string if needed or let DB handle it if autoincrement (but it's CUID)
+            // const { v4: uuidv4 } = require('uuid'); 
+
 
             try {
                 await prisma.user.create({

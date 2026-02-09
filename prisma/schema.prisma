@@ -1,15 +1,14 @@
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider = "mongodb"
+  url      = env("MONGODB_URI")
 }
 
 model User {
-  id             String         @id @default(cuid())
+  id             String         @id @default(cuid()) @map("_id")
   email          String         @unique
   name           String?
   password       String
@@ -23,7 +22,7 @@ model User {
 }
 
 model ContactEntry {
-  id        String   @id @default(cuid())
+  id        String   @id @default(cuid()) @map("_id")
   name      String
   email     String
   message   String
@@ -36,7 +35,7 @@ model ContactEntry {
 }
 
 model Category {
-  id               String    @id @default(cuid())
+  id               String    @id @default(cuid()) @map("_id")
   name             String    @unique
   slug             String    @unique
   summary          String?
@@ -55,7 +54,7 @@ model Category {
 }
 
 model Product {
-  id               String             @id @default(cuid())
+  id               String             @id @default(cuid()) @map("_id")
   name             String
   description      String
   details          String?
@@ -72,16 +71,24 @@ model Product {
   product_images   product_images[]
   product_variants product_variants[]
   category         Category           @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  products_A       Product[]          @relation("RelatedProducts")
-  products_B       Product[]          @relation("RelatedProducts")
-  tags             Tag[]              @relation("ProductTags")
+  
+  // Self-Relation M-N (Related Products)
+  relatedProductIDs String[]
+  products_A        Product[]          @relation("RelatedProducts", fields: [relatedProductIDs], references: [id])
+  
+  referencedByProductIDs String[]
+  products_B        Product[]          @relation("RelatedProducts", fields: [referencedByProductIDs], references: [id])
+  
+  // M-N with Tags
+  tagIDs            String[]
+  tags              Tag[]              @relation("ProductTags", fields: [tagIDs], references: [id])
 
   @@index([categoryId], map: "products_categoryId_idx")
   @@map("products")
 }
 
 model Customer {
-  id        String   @id @default(cuid())
+  id        String   @id @default(cuid()) @map("_id")
   name      String
   email     String   @unique
   phone     String?
@@ -93,7 +100,7 @@ model Customer {
 }
 
 model Order {
-  id              String      @id @default(cuid())
+  id              String      @id @default(cuid()) @map("_id")
   userId          String?
   customerName    String
   customerEmail   String
@@ -109,7 +116,7 @@ model Order {
 }
 
 model OrderItem {
-  id        String   @id @default(cuid())
+  id        String   @id @default(cuid()) @map("_id")
   order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
   orderId   String
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
@@ -120,18 +127,17 @@ model OrderItem {
   updatedAt DateTime @updatedAt
 
   @@map("order_items")
-
-  
 }
 
 model Tag {
-  id        String    @id @default(cuid())
-  name      String    @unique
-  products  Product[] @relation("ProductTags")
+  id         String    @id @default(cuid()) @map("_id")
+  name       String    @unique
+  productIDs String[]
+  products   Product[] @relation("ProductTags", fields: [productIDs], references: [id])
 }
 
 model BlogPost {
-  id        String   @id @default(cuid())
+  id        String   @id @default(cuid()) @map("_id")
   title     String
   slug      String   @unique
   excerpt   String?
@@ -148,7 +154,7 @@ model BlogPost {
 }
 
 model Media {
-  id        String      @id @default(cuid())
+  id        String      @id @default(cuid()) @map("_id")
   url       String
   alt       String?
   createdAt DateTime    @default(now())
@@ -159,7 +165,7 @@ model Media {
 }
 
 model HeroMedia {
-  id                String   @id @default(cuid())
+  id                String   @id @default(cuid()) @map("_id")
   key               String   @unique
   title             String?
   subtitle          String?
@@ -176,7 +182,7 @@ model HeroMedia {
 }
 
 model Settings {
-  id                String  @id @default(cuid())
+  id                String  @id @default(cuid()) @map("_id")
   websiteName       String?
   websiteLogoUrl    String?
   websiteFaviconUrl String?
@@ -195,7 +201,7 @@ model Settings {
 }
 
 model product_images {
-  id        String   @id
+  id        String   @id @default(cuid()) @map("_id")
   url       String
   alt       String?
   productId String
@@ -208,7 +214,7 @@ model product_images {
 }
 
 model product_variants {
-  id        String   @id
+  id        String   @id @default(cuid()) @map("_id")
   name      String
   sku       String   @unique
   price     Float?
