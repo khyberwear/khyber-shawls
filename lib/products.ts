@@ -99,7 +99,12 @@ function serializeProduct(product: ProductWithRelations): SerializedProduct {
     inStock: product.inStock,
     featuredImageUrl: product.image || null,
     featuredImageAlt: product.name || null,
-    gallery: product.product_images.map(img => ({ ...img, alt: img.alt ?? "" })),
+    gallery: product.product_images.map(img => ({
+      id: img.id,
+      url: img.url,
+      alt: img.alt ?? null,
+      position: img.position
+    })),
     categoryName: product.category?.name ?? null,
     categorySlug: product.category?.slug ?? null,
   };
@@ -141,10 +146,10 @@ function serializeCategory(category: CategoryWithRelations): SerializedCategory 
     slug: category.slug,
     summary: category.summary ?? null,
     productCount: category.products?.length ?? 0,
-    featuredImageUrl: (category as any).featuredImageUrl ?? null,
-    featuredImageAlt: (category as any).featuredImageAlt ?? null,
-    seoTitle: (category as any).seoTitle ?? null,
-    seoDescription: (category as any).seoDescription ?? null,
+    featuredImageUrl: category.featuredImageUrl ?? null,
+    featuredImageAlt: category.featuredImageAlt ?? null,
+    seoTitle: category.seoTitle ?? null,
+    seoDescription: category.seoDescription ?? null,
     intro,
     sections,
     uiConfig,
@@ -152,74 +157,74 @@ function serializeCategory(category: CategoryWithRelations): SerializedCategory 
 }
 
 export async function fetchPublishedProducts() {
-    const products = await prisma.product.findMany({
-      where: { published: true, inStock: true },
-      include: {
-        category: true,
-        product_images: true,
-        tags: true,
-      },
-      orderBy: { createdAt: "desc" },
-    });
+  const products = await prisma.product.findMany({
+    where: { published: true, inStock: true },
+    include: {
+      category: true,
+      product_images: true,
+      tags: true,
+    },
+    orderBy: { createdAt: "desc" },
+  });
 
-    return products.map(p => ({
-      ...serializeProduct(p as unknown as ProductWithRelations),
-      tags: (p as any).tags ? (p as any).tags.map((t: any) => t.name) : [],
-    }));
+  return products.map(p => ({
+    ...serializeProduct(p as unknown as ProductWithRelations),
+    tags: (p as any).tags ? (p as any).tags.map((t: any) => t.name) : [],
+  }));
 }
 
 export async function fetchProductsByCategorySlug(slug: string) {
-    if (!slug) {
-      return null;
-    }
+  if (!slug) {
+    return null;
+  }
 
-    const category = await prisma.category.findUnique({
-      where: { slug },
-      include: {
-        products: {
-          where: { published: true },
-          include: {
-            category: true,
-            product_images: true,
-          },
-          orderBy: { createdAt: "desc" },
+  const category = await prisma.category.findUnique({
+    where: { slug },
+    include: {
+      products: {
+        where: { published: true },
+        include: {
+          category: true,
+          product_images: true,
         },
+        orderBy: { createdAt: "desc" },
       },
-    });
+    },
+  });
 
-    if (!category) return null;
+  if (!category) return null;
 
-    const serializedCategory = serializeCategory(category as unknown as CategoryWithRelations);
-    const serializedProducts = (category.products as unknown as ProductWithRelations[]).map(p => serializeProduct(p));
+  const serializedCategory = serializeCategory(category as unknown as CategoryWithRelations);
+  const serializedProducts = (category.products as unknown as ProductWithRelations[]).map(p => serializeProduct(p));
 
-    return {
-      category: { ...serializedCategory, productCount: serializedProducts.length },
-      products: serializedProducts,
-    };
+  return {
+    category: { ...serializedCategory, productCount: serializedProducts.length },
+    products: serializedProducts,
+  };
 }
 
 export async function fetchCategoriesWithProducts() {
-    const categories = await prisma.category.findMany({
-      include: {
-        products: { where: { published: true } },
-      },
-      orderBy: { name: "asc" },
-    });
+  const categories = await prisma.category.findMany({
+    include: {
+      products: { where: { published: true } },
+    },
+    orderBy: { name: "asc" },
+  });
 
-    return (categories as unknown as CategoryWithRelations[]).map(serializeCategory);
+  return (categories as unknown as CategoryWithRelations[]).map(serializeCategory);
 }
 
 export async function fetchAllCategories() {
-    const categories = await prisma.category.findMany({
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-      },
-      orderBy: { name: "asc" },
-    });
+  const categories = await prisma.category.findMany({
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+    },
+    orderBy: { name: "asc" },
+  });
 
-    return categories;
+  return categories;
 }
 
 export async function fetchProductSummariesByIds(ids: string[]) {
@@ -237,46 +242,46 @@ export async function fetchProductSummariesByIds(ids: string[]) {
 }
 
 export async function fetchProductBySlug(slug: string): Promise<SerializedProductDetail | null> {
-    if (!slug) {
-      return null;
-    }
+  if (!slug) {
+    return null;
+  }
 
-    const product = await prisma.product.findUnique({
-      where: { slug },
-      include: {
-        category: true,
-        product_images: true,
-      },
-    });
+  const product = await prisma.product.findUnique({
+    where: { slug },
+    include: {
+      category: true,
+      product_images: true,
+    },
+  });
 
-    if (!product) return null;
+  if (!product) return null;
 
-    // The `product_variants` table has an inventory count, but for now we return 0
-    return { ...(serializeProduct(product as unknown as ProductWithRelations)), inventory: 0 };
+  // The `product_variants` table has an inventory count, but for now we return 0
+  return { ...(serializeProduct(product as unknown as ProductWithRelations)), inventory: 0 };
 }
 
 export async function fetchRelatedProducts(categorySlug: string, currentProductId: string) {
-    if (!categorySlug) return [];
+  if (!categorySlug) return [];
 
-    const category = await prisma.category.findUnique({
-      where: { slug: categorySlug },
-      include: {
-        products: {
-          where: {
-            published: true,
-            id: { not: currentProductId },
-          },
-          take: 4,
-          include: { product_images: true, category: true },
+  const category = await prisma.category.findUnique({
+    where: { slug: categorySlug },
+    include: {
+      products: {
+        where: {
+          published: true,
+          id: { not: currentProductId },
         },
+        take: 4,
+        include: { product_images: true, category: true },
       },
-    });
+    },
+  });
 
-    return (category?.products || []).map(p => ({
-      id: p.id,
-      title: p.name,
-      slug: p.slug,
-      price: Number(p.price),
-      featuredImage: { url: p.image, alt: p.name },
-    }));
+  return (category?.products || []).map(p => ({
+    id: p.id,
+    title: p.name,
+    slug: p.slug,
+    price: Number(p.price),
+    featuredImage: { url: p.image, alt: p.name },
+  }));
 }

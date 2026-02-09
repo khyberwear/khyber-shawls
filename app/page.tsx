@@ -16,11 +16,27 @@ import { ProductCard } from "@/components/product-card";
 export const revalidate = 1800; // Revalidate every 30 minutes (ISR)
 
 export default async function HomePage() {
-  const [heroSlides, products, categories] = await Promise.all([
-    fetchAllHeroContent(),
-    fetchPublishedProducts(),
-    fetchCategoriesWithProducts(),
-  ]);
+  let heroSlides: any[] = [];
+  let products: any[] = [];
+  let categories: any[] = [];
+
+  try {
+    const [h, p, c] = await Promise.all([
+      fetchAllHeroContent(),
+      fetchPublishedProducts(),
+      fetchCategoriesWithProducts(),
+    ]);
+    heroSlides = h;
+    products = p;
+    categories = c;
+  } catch (error) {
+    console.error("Home Page Data Fetch Error:", error);
+    // heroSlides will be partially populated by fetchAllHeroContent's internal try-catch
+    // but we ensure it's at least an array here
+    if (!heroSlides.length) {
+      heroSlides = await fetchAllHeroContent(); // Fallback if the whole Promise.all failed
+    }
+  }
 
   // Featured, Men, Women, Kids logic
   const featuredProducts = products.filter((p) => (p as any).featured === true);
